@@ -79,19 +79,35 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex flex-col selection:bg-amber-200 relative overflow-x-hidden">
-      {/* Background Decorative Ambient Gradients (Minimal Bento Vibe) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Warm Golden/Amber Glow - Top Left */}
+      {/* Background Decorative Ambient Gradients & Geometric Circles (Minimal Bento Style as in reference photos) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
+        {/* Soft Ambient Radial Blur Glows */}
         <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-gradient-to-br from-[#FED766]/30 via-[#FEE488]/15 to-transparent blur-3xl opacity-80" />
-        
-        {/* Soft Pastel Blush Pink Glow - Top Right */}
         <div className="absolute top-10 -right-28 w-[450px] h-[450px] rounded-full bg-gradient-to-bl from-[#F8B4C0]/25 via-[#FDE4E8]/15 to-transparent blur-3xl opacity-75" />
-        
-        {/* Gentle Mint/Teal Glow - Mid Left */}
         <div className="absolute top-[45%] -left-32 w-[380px] h-[380px] rounded-full bg-gradient-to-tr from-teal-200/20 via-emerald-100/10 to-transparent blur-3xl opacity-70" />
-        
-        {/* Soft Lavender Glow - Bottom Right */}
         <div className="absolute -bottom-20 right-10 w-[420px] h-[420px] rounded-full bg-gradient-to-tl from-purple-200/20 via-indigo-100/10 to-transparent blur-3xl opacity-60" />
+
+        {/* Floating Pastel Decorative Circles (Exact like in Reference Photos) */}
+        {/* Top-Left Cluster */}
+        <div className="absolute top-12 left-8 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#FED766]/20 border-2 border-[#FED766]/35" />
+        <div className="absolute top-36 left-28 w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-[#FED766]/25" />
+        <div className="absolute top-48 left-12 w-4 h-4 rounded-full bg-[#F8B4C0]/50" />
+
+        {/* Top-Right Cluster */}
+        <div className="absolute top-16 right-10 w-28 h-28 sm:w-40 sm:h-40 rounded-full bg-[#F8B4C0]/20 border-2 border-[#F8B4C0]/30" />
+        <div className="absolute top-48 right-24 w-14 h-14 sm:w-20 sm:h-20 rounded-full border-3 border-[#F8B4C0]/35" />
+        <div className="absolute top-28 right-48 w-5 h-5 rounded-full bg-[#FED766]/60" />
+        <div className="absolute top-64 right-12 w-3 h-3 rounded-full bg-rose-400/40" />
+
+        {/* Mid-Screen Accents */}
+        <div className="absolute top-[45%] -left-8 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-teal-100/30 border border-teal-200/40" />
+        <div className="absolute top-[55%] left-16 w-10 h-10 rounded-full border-2 border-teal-300/30" />
+        <div className="absolute top-[38%] right-8 w-8 h-8 rounded-full bg-purple-200/35" />
+
+        {/* Bottom Cluster */}
+        <div className="absolute bottom-24 right-12 w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-purple-100/25 border border-purple-200/35" />
+        <div className="absolute bottom-16 right-44 w-16 h-16 rounded-full bg-[#FED766]/20 border border-[#FED766]/30" />
+        <div className="absolute bottom-40 left-8 w-5 h-5 rounded-full bg-amber-400/40" />
 
         {/* Subtle Decorative Bag Mascot (Desktop Background Watermark) */}
         <div className="hidden lg:block absolute bottom-12 left-10 opacity-15 select-none pointer-events-none transform -rotate-6">

@@ -180,33 +180,6 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
             </div>
           </div>
 
-          {/* Color Theme Selector (Pastel palette like in references) */}
-          <div className="bg-[#FAF8F5] border border-stone-200/80 rounded-2xl p-3.5 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-stone-700">
-              <Palette className="w-3.5 h-3.5 text-stone-500" />
-              <span>Пастельный цвет карточки</span>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
-              {(Object.keys(CARD_THEMES) as CardColorTheme[]).map((themeKey) => {
-                const t = CARD_THEMES[themeKey];
-                const isSelected = colorTheme === themeKey;
-                return (
-                  <button
-                    key={themeKey}
-                    type="button"
-                    onClick={() => setColorTheme(themeKey)}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl border text-[11px] font-bold transition-all ${t.bg} ${
-                      isSelected ? 'ring-2 ring-stone-800 shadow-xs border-stone-400' : 'border-stone-200/80 hover:border-stone-400'
-                    }`}
-                  >
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: t.dotColor }} />
-                    <span className="text-stone-700">{t.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* 
             «КОПИЛКА» (Piggy Bank) section
             Can be toggled, edited, disabled, re-enabled. Settings and saved amount persist!
