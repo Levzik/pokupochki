@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Покупочки</string>
+    <string name="widget_description">Виджет списка покупок «Каждоднев»</string>
+</resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Макет виджета Google Keep для приложения «Покупочки» -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background_rounded"
+    android:padding="14dp">
+
+    <!-- Header bar -->
+    <RelativeLayout
+        android:id="@+id/widget_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_app_logo"
+                android:contentDescription="Покупочки" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Покупочки"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#1C1917" />
+        </LinearLayout>
+
+        <!-- Quick Add "+" Button -->
+        <ImageButton
+            android:id="@+id/widget_btn_add"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/bg_btn_yellow"
+            android:src="@drawable/ic_plus_dark"
+            android:contentDescription="Добавить покупку" />
+    </RelativeLayout>
+
+    <!-- Interactive List of shopping items -->
+    <ListView
+        android:id="@+id/widget_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:divider="#F0ECE1"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical" />
+
+    <!-- Empty state view -->
+    <TextView
+        android:id="@+id/widget_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Список покупок пуст ✨"
+        android:textColor="#9CA3AF"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Total Sum Footer Pill -->
+    <TextView
+        android:id="@+id/widget_total_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_total_pill"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="14dp"
+        android:text="Итого: 0 ₽"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#1C1917" />
+</LinearLayout>

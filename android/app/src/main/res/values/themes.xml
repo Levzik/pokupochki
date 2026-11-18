@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.Pokupochki" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#FAF8F5</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#FAF8F5</item>
+        <item name="android:windowBackground">#FAF8F5</item>
+    </style>
+</resources>

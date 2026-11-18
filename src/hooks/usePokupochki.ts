@@ -87,6 +87,17 @@ export function usePokupochki() {
   const [isLoading, setIsLoading] = useState(true);
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Helper to notify native Android widget bridge if running inside native Android App
+  const syncToAndroidBridge = (items: DailyItem[]) => {
+    if (typeof window !== 'undefined' && (window as any).AndroidBridge?.syncDailyItemsToWidget) {
+      try {
+        (window as any).AndroidBridge.syncDailyItemsToWidget(JSON.stringify(items));
+      } catch (e) {
+        console.warn('AndroidBridge sync error:', e);
+      }
+    }
+  };
+
   // Load from IndexedDB on startup
   const loadData = useCallback(async () => {
     try {
@@ -105,6 +116,7 @@ export function usePokupochki() {
       setDailyItems(daily);
       setMainPurchases(main);
       setSettings(loadedSettings);
+      syncToAndroidBridge(daily);
     } catch (err) {
       console.error('Failed to load from IndexedDB:', err);
     } finally {
@@ -183,48 +195,64 @@ export function usePokupochki() {
       updatedAt: now,
     };
 
-    setDailyItems(prev => [newItem, ...prev]);
+    setDailyItems(prev => {
+      const next = [newItem, ...prev];
+      syncToAndroidBridge(next);
+      return next;
+    });
     await db.saveDailyItem(newItem);
     scheduleSync(settings);
   }, [settings, scheduleSync]);
 
   const toggleDailyItem = useCallback(async (id: string) => {
     const now = new Date().toISOString();
-    setDailyItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const updated = {
-          ...item,
-          completed: !item.completed,
-          completedAt: !item.completed ? now : undefined,
-          updatedAt: now
-        };
-        db.saveDailyItem(updated);
-        return updated;
-      }
-      return item;
-    }));
+    setDailyItems(prev => {
+      const next = prev.map(item => {
+        if (item.id === id) {
+          const updated = {
+            ...item,
+            completed: !item.completed,
+            completedAt: !item.completed ? now : undefined,
+            updatedAt: now
+          };
+          db.saveDailyItem(updated);
+          return updated;
+        }
+        return item;
+      });
+      syncToAndroidBridge(next);
+      return next;
+    });
     scheduleSync(settings);
   }, [settings, scheduleSync]);
 
   const updateDailyItem = useCallback(async (id: string, updates: Partial<DailyItem>) => {
     const now = new Date().toISOString();
-    setDailyItems(prev => prev.map(item => {
-      if (item.id === id) {
-        const updated = {
-          ...item,
-          ...updates,
-          updatedAt: now
-        };
-        db.saveDailyItem(updated);
-        return updated;
-      }
-      return item;
-    }));
+    setDailyItems(prev => {
+      const next = prev.map(item => {
+        if (item.id === id) {
+          const updated = {
+            ...item,
+            ...updates,
+            updatedAt: now
+          };
+          db.saveDailyItem(updated);
+          return updated;
+        }
+        return item;
+      });
+      syncToAndroidBridge(next);
+      return next;
+    });
     scheduleSync(settings);
   }, [settings, scheduleSync]);
 
   const deleteDailyItem = useCallback(async (id: string) => {
-    setDailyItems(prev => prev.filter(item => item.id !== id));
+    setDailyItems(prev => {
+      const next = prev.filter(item => item.id !== id);
+      syncToAndroidBridge(next);
+      return next;
+    });
     await db.deleteDailyItem(id);
     scheduleSync(settings);
   }, [settings, scheduleSync]);
@@ -233,6 +261,7 @@ export function usePokupochki() {
     const active = dailyItems.filter(item => !item.completed);
     const completedIds = dailyItems.filter(item => item.completed).map(i => i.id);
     setDailyItems(active);
+    syncToAndroidBridge(active);
     for (const id of completedIds) {
       await db.deleteDailyItem(id);
     }
