@@ -12,10 +12,10 @@ export const SyncBadge: React.FC<SyncBadgeProps> = ({ settings, onSyncClick }) =
   const hasGitHub = Boolean(settings.githubToken && settings.githubRepo);
 
   let badgeContent = {
-    icon: <HardDrive className="w-3.5 h-3.5 text-stone-600" />,
+    icon: <HardDrive className="w-3.5 h-3.5 text-stone-500" />,
     text: 'Сохранено локально',
-    bg: 'bg-stone-100 hover:bg-stone-200 text-stone-700',
-    border: 'border-stone-200'
+    bg: 'bg-white hover:bg-stone-50 text-stone-700 shadow-2xs',
+    border: 'border-stone-200/80'
   };
 
   if (!isOnline) {

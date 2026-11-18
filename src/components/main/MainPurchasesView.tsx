@@ -82,16 +82,15 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
             />
           ))}
 
-          {/* Minimal Bento Quick Add Card */}
+          {/* Minimal Bento Quick Add Card (Matching референс 1.png) */}
           <div
             onClick={() => setIsAddModalOpen(true)}
-            className="rounded-[28px] border-2 border-dashed border-stone-200/90 hover:border-amber-400 bg-white/50 hover:bg-gradient-to-br hover:from-amber-50/50 hover:to-rose-50/40 min-h-[220px] p-6 flex flex-col items-center justify-center text-stone-400 hover:text-stone-800 transition-all duration-200 cursor-pointer group shadow-2xs"
+            className="rounded-[28px] border-2 border-dashed border-stone-300 bg-white/40 hover:bg-white/80 min-h-[280px] p-6 flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#F8B4C0]/20 group-hover:bg-[#FED766] group-hover:text-stone-900 flex items-center justify-center text-rose-500 transition-colors mb-2 shadow-xs">
-              <Plus className="w-6 h-6 stroke-[2.5]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#FCE7F3] group-hover:bg-[#FED766] flex items-center justify-center text-stone-900 transition-all duration-200 mb-3 shadow-xs group-hover:scale-105">
+              <Plus className="w-7 h-7 stroke-[2.5]" />
             </div>
-            <span className="text-sm font-bold text-stone-700">Добавить покупку</span>
-            <span className="text-xs text-stone-400 group-hover:text-stone-600 mt-0.5">Новая цель</span>
+            <span className="text-base font-bold text-stone-900">Добавить покупку</span>
           </div>
         </div>
       )}

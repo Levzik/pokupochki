@@ -62,7 +62,17 @@ export const DailyListView: React.FC<DailyListViewProps> = ({
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto">
+    <div className="w-full max-w-xl mx-auto space-y-4">
+      {/* Section Header (Matching референс 2.png) */}
+      <div className="px-1">
+        <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
+          Каждоднев
+        </h2>
+        <p className="text-xs sm:text-sm text-stone-500 font-medium mt-0.5">
+          Быстрый список повседневных покупок
+        </p>
+      </div>
+
       {/* Main Bento Card */}
       <div className="bg-white rounded-[28px] p-5 sm:p-7 shadow-soft border border-stone-100 transition-all">
         {/* Card Header & History link */}

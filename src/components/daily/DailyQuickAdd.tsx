@@ -55,11 +55,13 @@ export const DailyQuickAdd: React.FC<DailyQuickAddProps> = ({ onAdd }) => {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           placeholder="Цена"
-          className="w-full bg-[#FAF8F5] border border-stone-200/80 rounded-2xl px-3 py-3 text-sm sm:text-base font-medium text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-amber-400 focus:shadow-xs transition-all duration-150 text-right pr-6"
+          className="w-full bg-[#FAF8F5] border border-stone-200/80 rounded-2xl px-3 py-3 text-sm sm:text-base font-medium text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-amber-400 focus:shadow-xs transition-all duration-150 text-center sm:text-right pr-3 sm:pr-6"
         />
-        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-semibold select-none pointer-events-none">
-          ₽
-        </span>
+        {price && (
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-semibold select-none pointer-events-none">
+            ₽
+          </span>
+        )}
       </div>
 
       {/* Add Button */}

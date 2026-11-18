@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Calendar, TrendingUp, ShoppingBag, PiggyBank, ArrowDownRight, Tag } from 'lucide-react';
+import { Calendar, TrendingUp, ShoppingCart, PiggyBank, Clock, Tag } from 'lucide-react';
 import { DailyItem, MainPurchase } from '../../types';
 
 interface StatsViewProps {
@@ -82,7 +82,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-in fade-in">
-      {/* Title & Filter Tabs */}
+      {/* Title & Filter Tabs (Matching референс 3.png) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
         <div>
           <h2 className="text-2xl font-black text-stone-900 tracking-tight">Статистика расходов</h2>
@@ -92,7 +92,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
         </div>
 
         {/* Period Selector Pills */}
-        <div className="inline-flex p-1 rounded-2xl bg-[#F2EDE4]/80 border border-stone-200/50 self-start sm:self-auto">
+        <div className="inline-flex p-1 rounded-2xl bg-[#EDE6DC]/80 border border-stone-200/50 self-start sm:self-auto">
           {[
             { id: 'day', label: 'День' },
             { id: 'week', label: 'Неделя' },
@@ -102,9 +102,9 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
             <button
               key={tab.id}
               onClick={() => setPeriod(tab.id as Period)}
-              className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 period === tab.id
-                  ? 'bg-[#FED766] text-stone-900 shadow-xs'
+                  ? 'bg-gradient-to-b from-[#FED766] to-[#FDBF3B] text-stone-900 shadow-sm'
                   : 'text-stone-500 hover:text-stone-800'
               }`}
             >
@@ -114,63 +114,57 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
         </div>
       </div>
 
-      {/* Bento Metric Cards */}
+      {/* Bento Metric Cards (Matching pastel styling from референс 3.png) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Total Spent */}
-        <div className="bg-white rounded-[26px] p-5 shadow-soft border border-stone-100 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-stone-500 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Потрачено</span>
-            <div className="p-2 rounded-xl bg-amber-50 text-amber-700">
-              <TrendingUp className="w-4 h-4" />
-            </div>
+        {/* 1. Total Spent (Warm peach) */}
+        <div className="bg-[#FFF8F3] rounded-[28px] p-5 sm:p-6 shadow-soft border border-[#FDE8CE]/90 flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="w-14 h-14 rounded-2xl bg-[#FDE8CE] flex items-center justify-center text-amber-900 shrink-0 shadow-2xs">
+            <TrendingUp className="w-7 h-7 stroke-[2.2]" />
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-stone-900 tabular-nums">
+            <span className="text-xs font-semibold text-stone-500 block">Потрачено</span>
+            <p className="text-2xl sm:text-3xl font-black text-stone-900 tabular-nums leading-tight">
               {totalSpent.toLocaleString('ru-RU')} ₽
             </p>
-            <p className="text-[11px] text-stone-400 mt-1 font-medium">За выбранный период</p>
           </div>
         </div>
 
-        {/* Count of Purchases */}
-        <div className="bg-white rounded-[26px] p-5 shadow-soft border border-stone-100 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-stone-500 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Куплено товаров</span>
-            <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-              <ShoppingBag className="w-4 h-4" />
-            </div>
+        {/* 2. Count of Purchases (Soft pink) */}
+        <div className="bg-[#FFF5F7] rounded-[28px] p-5 sm:p-6 shadow-soft border border-[#FCE7F3]/90 flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="w-14 h-14 rounded-2xl bg-[#FCE7F3] flex items-center justify-center text-rose-700 shrink-0 shadow-2xs">
+            <ShoppingCart className="w-7 h-7 stroke-[2.2]" />
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-stone-900 tabular-nums">
+            <span className="text-xs font-semibold text-stone-500 block">Куплено товаров</span>
+            <p className="text-2xl sm:text-3xl font-black text-stone-900 tabular-nums leading-tight">
               {historyList.length} шт.
             </p>
-            <p className="text-[11px] text-stone-400 mt-1 font-medium">
-              Средний чек: {historyList.length > 0 ? Math.round(totalSpent / historyList.length).toLocaleString('ru-RU') : 0} ₽
-            </p>
           </div>
         </div>
 
-        {/* Saved in Piggy Banks */}
-        <div className="bg-white rounded-[26px] p-5 shadow-soft border border-stone-100 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-stone-500 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">В копилках сейчас</span>
-            <div className="p-2 rounded-xl bg-teal-50 text-teal-700">
-              <PiggyBank className="w-4 h-4" />
-            </div>
+        {/* 3. Saved in Piggy Banks (Soft mint) */}
+        <div className="bg-[#F0FDF4] rounded-[28px] p-5 sm:p-6 shadow-soft border border-[#DCFCE7]/90 flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="w-14 h-14 rounded-2xl bg-[#DCFCE7] flex items-center justify-center text-teal-800 shrink-0 shadow-2xs">
+            <PiggyBank className="w-7 h-7 stroke-[2.2]" />
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-teal-800 tabular-nums">
+            <span className="text-xs font-semibold text-stone-500 block">В копилках сейчас</span>
+            <p className="text-2xl sm:text-3xl font-black text-stone-900 tabular-nums leading-tight">
               {totalSavedInGoals.toLocaleString('ru-RU')} ₽
             </p>
-            <p className="text-[11px] text-stone-400 mt-1 font-medium">На отложенные цели</p>
           </div>
         </div>
       </div>
 
-      {/* History List */}
+      {/* History List (Matching референс 3.png) */}
       <div className="bg-white rounded-[28px] p-6 shadow-soft border border-stone-100 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-stone-900">История покупок</h3>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700">
+              <Clock className="w-4 h-4 stroke-[2.5]" />
+            </div>
+            <h3 className="text-base font-bold text-stone-900">История покупок</h3>
+          </div>
           <span className="text-xs font-semibold text-stone-400">
             {historyList.length} {historyList.length === 1 ? 'запись' : 'записей'}
           </span>
@@ -187,27 +181,26 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
         ) : (
           <div className="divide-y divide-stone-100">
             {historyList.map((item) => (
-              <div key={item.id} className="py-3 flex items-center justify-between">
+              <div key={item.id} className="py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-xl ${item.type === 'main' ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'}`}>
-                    <ArrowDownRight className="w-4 h-4" />
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100/60 flex items-center justify-center text-lg shrink-0">
+                    {item.type === 'main' ? '🛍️' : '🛒'}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-stone-800">{item.title}</p>
+                    <p className="text-sm font-bold text-stone-900">{item.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs text-stone-400">
                         {new Date(item.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
                       </span>
-                      <span className="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full bg-stone-100 text-[10px] font-semibold text-stone-500">
-                        <Tag className="w-2.5 h-2.5" />
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[10px] font-bold text-stone-800">
                         {item.category}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <span className="text-base font-extrabold text-stone-900 tabular-nums">
-                  -{item.price.toLocaleString('ru-RU')} ₽
+                <span className="text-base font-black text-stone-900 tabular-nums">
+                  -{item.price ? `${item.price.toLocaleString('ru-RU')} ₽` : '0 ₽'}
                 </span>
               </div>
             ))}

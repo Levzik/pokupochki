@@ -20,7 +20,7 @@ export const TabSwitch: React.FC<{
         Moves seamlessly between "Главные" and "Каждоднев"
       */}
       <div
-        className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl sm:rounded-full bg-[#FED766] shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
+        className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl sm:rounded-full bg-gradient-to-b from-[#FED766] to-[#FDBF3B] shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-none"
         style={{
           transform: isMain ? 'translateX(0px)' : 'translateX(calc(100%))'
         }}

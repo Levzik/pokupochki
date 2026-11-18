@@ -117,11 +117,11 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
           aria-label={item.completed ? "Отметить как некупленное" : "Отметить как купленное"}
           className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-200 shrink-0 active:scale-90 ${
             item.completed
-              ? 'bg-[#F8B4C0] border-[#F8B4C0] text-white shadow-xs'
+              ? 'bg-[#FED766] border-[#FED766] text-stone-900 shadow-xs'
               : 'border-2 border-stone-300 hover:border-amber-400 bg-white hover:scale-105'
           }`}
         >
-          {item.completed && <Check className="w-4 h-4 stroke-[3] animate-in zoom-in-75 duration-150" />}
+          {item.completed && <Check className="w-4 h-4 stroke-[3] text-stone-900 animate-in zoom-in-75 duration-150" />}
         </button>
 
         <span
