@@ -78,5 +78,11 @@ class MainActivity : AppCompatActivity() {
             prefs.edit().putString("daily_items", jsonItems).apply()
             DailyShoppingWidgetProvider.updateAllWidgets(context)
         }
+
+        @JavascriptInterface
+        fun getDailyItemsFromWidget(): String {
+            val prefs = context.getSharedPreferences("pokupochki_storage", Context.MODE_PRIVATE)
+            return prefs.getString("daily_items", "[]") ?: "[]"
+        }
     }
 }

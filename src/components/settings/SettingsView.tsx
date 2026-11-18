@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { SyncSettings } from '../../types';
 import { githubSync } from '../../services/githubSync';
+import { cloudSync } from '../../services/cloudSync';
 import { exportBackupToFile, importBackupFromFile } from '../../services/exportImport';
 
 interface SettingsViewProps {
@@ -33,11 +34,29 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onDataReloaded,
 }) => {
   const [token, setToken] = useState(settings.githubToken);
-  const [repo, setRepo] = useState(settings.githubRepo);
+  const [repo, setRepo] = useState(settings.githubRepo || 'Levzik/pokupochki');
   const [branch, setBranch] = useState(settings.githubBranch || 'main');
   const [filePath, setFilePath] = useState(settings.githubFilePath || 'pokupochki-data.json');
   const [autoSync, setAutoSync] = useState(settings.autoSync);
   const [showToken, setShowToken] = useState(false);
+
+  const [cloudRoom, setCloudRoom] = useState(() => localStorage.getItem('pokupochki_cloud_room') || 'levzik');
+  const [cloudSyncing, setCloudSyncing] = useState(false);
+  const [cloudFeedback, setCloudFeedback] = useState<string | null>(null);
+
+  const handleCloudSync = async () => {
+    if (!cloudRoom.trim()) return;
+    localStorage.setItem('pokupochki_cloud_room', cloudRoom.trim());
+    setCloudSyncing(true);
+    setCloudFeedback(null);
+    const res = await cloudSync.sync(cloudRoom.trim());
+    setCloudSyncing(false);
+    setCloudFeedback(res.message);
+    if (res.success) {
+      onDataReloaded();
+    }
+    setTimeout(() => setCloudFeedback(null), 4000);
+  };
 
   const [testingConnection, setTestingConnection] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -111,6 +130,57 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <p className="text-xs sm:text-sm text-stone-500 font-medium">
           Offline-first хранилище, приватный GitHub и резервные копии
         </p>
+      </div>
+
+      {/* 1-Click Cloud Sync between APK and https://levzik.github.io/pokupochki/ */}
+      <div className="bg-gradient-to-br from-amber-50/90 to-orange-50/70 rounded-[28px] p-6 shadow-soft border border-amber-200/80 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#FED766] text-stone-900 flex items-center justify-center font-black text-lg shadow-xs">
+              ⚡
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-stone-900 leading-tight">
+                Синхронизация APK с сайтом
+              </h3>
+              <p className="text-xs text-stone-600 font-medium">
+                Мгновенный обмен данными между Android APK и levzik.github.io/pokupochki
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-stone-600 leading-relaxed">
+          Введите одинаковый код синхронизации на телефоне и на сайте (по умолчанию <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-bold text-stone-800">levzik</code>), чтобы данные на обоих устройствах объединились:
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <input
+            type="text"
+            value={cloudRoom}
+            onChange={(e) => setCloudRoom(e.target.value)}
+            placeholder="Код синхронизации (например: levzik)"
+            className="flex-1 bg-white border border-amber-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-stone-900 focus:border-amber-400 shadow-2xs"
+          />
+          <button
+            type="button"
+            onClick={handleCloudSync}
+            disabled={cloudSyncing || !cloudRoom.trim()}
+            className="py-2.5 px-5 rounded-2xl bg-gradient-to-r from-[#FED766] to-[#FDBF3B] hover:brightness-105 active:scale-95 text-stone-900 font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 shrink-0"
+          >
+            {cloudSyncing ? (
+              <RefreshCw className="w-4 h-4 animate-spin text-stone-900" />
+            ) : (
+              <span>⚡ Синхронизировать сейчас</span>
+            )}
+          </button>
+        </div>
+
+        {cloudFeedback && (
+          <p className="text-xs font-bold text-emerald-700 animate-in fade-in">
+            ✓ {cloudFeedback}
+          </p>
+        )}
       </div>
 
       {/* GitHub Sync Card */}

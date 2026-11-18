@@ -2,7 +2,6 @@ package com.pokupochki.app.widget
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Paint
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.pokupochki.app.R
@@ -53,16 +52,16 @@ class DailyWidgetViewsFactory(private val context: Context) : RemoteViewsService
         val item = itemList[position]
         val id = item.optString("id", "")
         val title = item.optString("title", "")
+        val hasPrice = item.has("price") && !item.isNull("price")
         val price = item.optInt("price", 0)
         val completed = item.optBoolean("completed", false)
 
         views.setTextViewText(R.id.item_title, title)
-        views.setTextViewText(R.id.item_price, "$price ₽")
+        views.setTextViewText(R.id.item_price, if (hasPrice) "$price ₽" else "")
 
-        // Состояние чекбокса и зачеркивание
+        // Checkbox status and strikethrough styling
         if (completed) {
             views.setImageViewResource(R.id.item_checkbox, R.drawable.ic_checkbox_checked)
-            // Strike-through text
             views.setTextColor(R.id.item_title, 0xFF9CA3AF.toInt())
             views.setTextColor(R.id.item_price, 0xFF9CA3AF.toInt())
         } else {
@@ -71,11 +70,20 @@ class DailyWidgetViewsFactory(private val context: Context) : RemoteViewsService
             views.setTextColor(R.id.item_price, 0xFF1C1917.toInt())
         }
 
-        // Клик по чекбоксу генерирует событие
-        val fillInIntent = Intent().apply {
+        // Toggle action intent
+        val fillInToggle = Intent().apply {
+            action = DailyShoppingWidgetProvider.ACTION_TOGGLE_ITEM
             putExtra(DailyShoppingWidgetProvider.EXTRA_ITEM_ID, id)
         }
-        views.setOnClickFillInIntent(R.id.item_row_container, fillInIntent)
+        views.setOnClickFillInIntent(R.id.item_checkbox, fillInToggle)
+        views.setOnClickFillInIntent(R.id.item_text_container, fillInToggle)
+
+        // Delete action intent
+        val fillInDelete = Intent().apply {
+            action = DailyShoppingWidgetProvider.ACTION_DELETE_ITEM
+            putExtra(DailyShoppingWidgetProvider.EXTRA_ITEM_ID, id)
+        }
+        views.setOnClickFillInIntent(R.id.item_btn_delete, fillInDelete)
 
         return views
     }

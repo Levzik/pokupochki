@@ -25,18 +25,18 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Brand logo & title */}
       <div 
         onClick={() => onTabChange(activeTab === 'stats' || activeTab === 'settings' ? 'daily' : activeTab)}
-        className="flex items-center gap-3 cursor-pointer select-none group"
+        className="flex items-center gap-2.5 sm:gap-3 cursor-pointer select-none group min-w-0"
       >
         <img
           src="./app-logo.png"
           alt="Покупочки"
-          className="w-11 h-11 rounded-2xl shadow-sm object-cover group-hover:scale-105 transition-transform duration-200"
+          className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl shadow-sm object-cover group-hover:scale-105 transition-transform duration-200 shrink-0"
         />
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-stone-900 font-sans leading-none">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-stone-900 font-sans leading-none whitespace-nowrap">
             Покупочки
           </h1>
-          <p className="hidden sm:block text-xs text-stone-500 font-medium mt-1">
+          <p className="hidden sm:block text-xs text-stone-500 font-medium mt-1 whitespace-nowrap">
             Планируй и покупай без лишнего
           </p>
         </div>

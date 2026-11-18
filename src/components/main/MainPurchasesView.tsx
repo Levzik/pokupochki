@@ -10,6 +10,7 @@ interface MainPurchasesViewProps {
   onAdd: (purchase: Omit<MainPurchase, 'id' | 'createdAt' | 'updatedAt' | 'completed'>) => void;
   onUpdate: (id: string, updates: Partial<MainPurchase>) => void;
   onDelete: (id: string) => void;
+  onToggleComplete: (id: string) => void;
   isAddModalOpen: boolean;
   setIsAddModalOpen: (open: boolean) => void;
 }
@@ -19,6 +20,7 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
   onAdd,
   onUpdate,
   onDelete,
+  onToggleComplete,
   isAddModalOpen,
   setIsAddModalOpen,
 }) => {
@@ -79,6 +81,7 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
               onClick={() => setSelectedPurchase(purchase)}
               onEdit={() => setSelectedPurchase(purchase)}
               onDelete={() => onDelete(purchase.id)}
+              onToggleComplete={() => onToggleComplete(purchase.id)}
             />
           ))}
 

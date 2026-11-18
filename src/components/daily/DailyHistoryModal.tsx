@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, RotateCcw, Trash2, CheckCircle2 } from 'lucide-react';
 import { DailyItem } from '../../types';
+import { matchProduct } from '../../data/productCatalog';
 
 interface DailyHistoryModalProps {
   isOpen: boolean;
@@ -58,38 +59,54 @@ export const DailyHistoryModal: React.FC<DailyHistoryModalProps> = ({
                 </span>
               </div>
 
-              {completedItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-stone-50 hover:bg-stone-100/80 transition-colors"
-                >
-                  <div className="min-w-0 pr-2">
-                    <p className="text-sm font-semibold text-stone-800 truncate">{item.title}</p>
-                    <p className="text-xs text-stone-400">
-                      {item.completedAt ? new Date(item.completedAt).toLocaleDateString('ru-RU') : 'Ранее'}
-                    </p>
+              {completedItems.map((item) => {
+                const img = item.imageUrl || matchProduct(item.title)?.image;
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-3 rounded-2xl bg-stone-50 hover:bg-stone-100/80 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 pr-2">
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={item.title}
+                          className="w-10 h-10 rounded-xl object-cover shrink-0 shadow-2xs border border-stone-200/60"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-amber-100/60 flex items-center justify-center text-base shrink-0">
+                          🛒
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-stone-800 truncate">{item.title}</p>
+                        <p className="text-xs text-stone-400">
+                          {item.completedAt ? new Date(item.completedAt).toLocaleDateString('ru-RU') : 'Ранее'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-stone-900 tabular-nums">
+                        {item.price !== undefined && item.price !== null ? `${item.price.toLocaleString('ru-RU')} ₽` : '—'}
+                      </span>
+                      <button
+                        onClick={() => onRestore(item.id)}
+                        title="Вернуть в список покупок"
+                        className="p-1.5 text-stone-500 hover:text-amber-600 hover:bg-amber-100/50 rounded-xl transition-colors"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onDelete(item.id)}
+                        title="Удалить навсегда"
+                        className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-stone-900 tabular-nums">
-                      {item.price.toLocaleString('ru-RU')} ₽
-                    </span>
-                    <button
-                      onClick={() => onRestore(item.id)}
-                      title="Вернуть в список покупок"
-                      className="p-1.5 text-stone-500 hover:text-amber-600 hover:bg-amber-100/50 rounded-xl transition-colors"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(item.id)}
-                      title="Удалить навсегда"
-                      className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

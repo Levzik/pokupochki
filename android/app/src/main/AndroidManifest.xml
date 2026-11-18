@@ -23,6 +23,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Быстрое добавление покупки прямо с виджета на рабочем столе -->
+        <activity
+            android:name=".widget.WidgetQuickAddActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Pokupochki.Dialog"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+
         <!-- Нативный виджет Google Keep style -->
         <receiver
             android:name=".widget.DailyShoppingWidgetProvider"

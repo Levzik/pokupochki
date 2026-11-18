@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background_rounded"
+    android:padding="20dp">
+
+    <!-- Dialog Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:src="@drawable/ic_app_logo"
+            android:contentDescription="Логотип" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Новая покупка"
+            android:textColor="#1C1917"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Item Title Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ЧТО КУПИТЬ"
+        android:textColor="#78716C"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/input_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#FAF8F5"
+        android:hint="Например: Хлеб, Молоко..."
+        android:textColor="#1C1917"
+        android:textColorHint="#A8A29E"
+        android:textSize="14sp"
+        android:paddingHorizontal="12dp"
+        android:inputType="textCapSentences"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Item Price Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ЦЕНА (₽, НЕОБЯЗАТЕЛЬНО)"
+        android:textColor="#78716C"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/input_item_price"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#FAF8F5"
+        android:hint="0"
+        android:textColor="#1C1917"
+        android:textColorHint="#A8A29E"
+        android:textSize="14sp"
+        android:paddingHorizontal="12dp"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Отмена"
+            android:textColor="#78716C"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_btn_yellow"
+            android:text="✓ Добавить"
+            android:textColor="#1C1917"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:paddingHorizontal="16dp" />
+    </LinearLayout>
+
+</LinearLayout>

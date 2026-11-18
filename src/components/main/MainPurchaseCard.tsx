@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MoreHorizontal, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { MoreHorizontal, ExternalLink, Image as ImageIcon, Check } from 'lucide-react';
 import { MainPurchase } from '../../types';
 import { getCardTheme } from '../../utils/cardThemes';
 
@@ -9,6 +9,7 @@ interface MainPurchaseCardProps {
   onClick: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onToggleComplete?: () => void;
 }
 
 export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
@@ -17,6 +18,7 @@ export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
   onClick,
   onEdit,
   onDelete,
+  onToggleComplete,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   // Color is automatically assigned from the pastel palette!
@@ -142,6 +144,23 @@ export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
             </div>
           </div>
         ) : null}
+        {/* Action Button: "Купить" per user request */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleComplete?.();
+          }}
+          className={`w-full mt-4 py-2.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all active:scale-95 ${
+            purchase.completed
+              ? 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
+              : 'bg-gradient-to-r from-[#FED766] to-[#FDBF3B] hover:brightness-105 text-stone-900 shadow-2xs'
+          }`}
+          title={purchase.completed ? 'Нажмите, чтобы вернуть в активные' : 'Отметить как купленное'}
+        >
+          <Check className="w-4 h-4 stroke-[2.5]" />
+          <span>{purchase.completed ? 'Куплено ✓' : 'Купить'}</span>
+        </button>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, Trash2, Edit2, X } from 'lucide-react';
 import { DailyItem } from '../../types';
+import { matchProduct } from '../../data/productCatalog';
 
 interface DailyItemRowProps {
   item: DailyItem;
@@ -107,10 +108,12 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
     );
   }
 
+  const productImage = item.imageUrl || matchProduct(item.title)?.image;
+
   return (
-    <div className="group flex items-center justify-between py-3 sm:py-3.5 border-b border-stone-100 last:border-b-0 transition-colors hover:bg-stone-50/60 rounded-xl px-2">
-      {/* Checkbox and Title */}
-      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 pr-2">
+    <div className="group flex items-center justify-between py-2.5 sm:py-3 border-b border-stone-100 last:border-b-0 transition-colors hover:bg-stone-50/60 rounded-xl px-2">
+      {/* Checkbox, Thumbnail and Title */}
+      <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 pr-2">
         <button
           type="button"
           onClick={() => onToggle(item.id)}
@@ -123,6 +126,16 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
         >
           {item.completed && <Check className="w-4 h-4 stroke-[3] text-stone-900 animate-in zoom-in-75 duration-150" />}
         </button>
+
+        {productImage && (
+          <img
+            src={productImage}
+            alt=""
+            className={`w-8 h-8 rounded-xl object-cover shrink-0 shadow-2xs border border-stone-100 transition-all ${
+              item.completed ? 'opacity-40 grayscale' : 'opacity-100'
+            }`}
+          />
+        )}
 
         <span
           onClick={() => setIsEditing(true)}

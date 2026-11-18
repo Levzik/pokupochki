@@ -40,6 +40,7 @@ export const App: React.FC = () => {
     clearCompletedDaily,
     addMainPurchase,
     updateMainPurchase,
+    toggleCompleteMainPurchase,
     deleteMainPurchase,
     updateSettings,
     triggerSync,
@@ -140,6 +141,7 @@ export const App: React.FC = () => {
             onAdd={addMainPurchase}
             onUpdate={updateMainPurchase}
             onDelete={deleteMainPurchase}
+            onToggleComplete={toggleCompleteMainPurchase}
             isAddModalOpen={isMainAddModalOpen}
             setIsAddModalOpen={setIsMainAddModalOpen}
           />

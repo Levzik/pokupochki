@@ -4,6 +4,8 @@ export interface DailyItem {
   id: string;
   title: string;
   price?: number;
+  imageUrl?: string;
+  category?: string;
   completed: boolean;
   completedAt?: string;
   createdAt: string;

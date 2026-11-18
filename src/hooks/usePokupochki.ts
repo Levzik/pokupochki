@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { DailyItem, MainPurchase, SyncSettings } from '../types';
 import { db } from '../services/db';
 import { githubSync } from '../services/githubSync';
+import { matchProduct } from '../data/productCatalog';
 
 // Initial demo items matching the visual references if DB is freshly opened
 const INITIAL_DAILY: DailyItem[] = [
@@ -9,6 +10,8 @@ const INITIAL_DAILY: DailyItem[] = [
     id: 'd-1',
     title: 'Хлеб',
     price: 90,
+    imageUrl: './products/bread.jpg',
+    category: 'Хлеб и выпечка',
     completed: false,
     createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
@@ -17,6 +20,8 @@ const INITIAL_DAILY: DailyItem[] = [
     id: 'd-2',
     title: 'Молоко',
     price: 130,
+    imageUrl: './products/milk.jpg',
+    category: 'Молочные продукты и яйца',
     completed: false,
     createdAt: new Date(Date.now() - 3600000).toISOString(),
     updatedAt: new Date(Date.now() - 3600000).toISOString(),
@@ -25,6 +30,8 @@ const INITIAL_DAILY: DailyItem[] = [
     id: 'd-3',
     title: 'Чай',
     price: 270,
+    imageUrl: './products/tea.jpg',
+    category: 'Заморозка и напитки',
     completed: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -113,6 +120,34 @@ export function usePokupochki() {
         main = INITIAL_MAIN;
       }
 
+      // Check if native Android widget bridge has items (e.g. added or deleted from home screen)
+      if (typeof window !== 'undefined' && (window as any).AndroidBridge?.getDailyItemsFromWidget) {
+        try {
+          const raw = (window as any).AndroidBridge.getDailyItemsFromWidget();
+          const widgetItems: DailyItem[] = JSON.parse(raw);
+          if (Array.isArray(widgetItems) && widgetItems.length > 0) {
+            const map = new Map<string, DailyItem>();
+            daily.forEach(i => map.set(i.id, i));
+            widgetItems.forEach(w => {
+              const matched = matchProduct(w.title);
+              const fullItem: DailyItem = {
+                ...w,
+                imageUrl: w.imageUrl || matched?.image,
+                category: w.category || matched?.category,
+              };
+              const ex = map.get(w.id);
+              if (!ex || new Date(w.updatedAt || 0) >= new Date(ex.updatedAt || 0)) {
+                map.set(w.id, fullItem);
+              }
+            });
+            daily = Array.from(map.values());
+            await db.setAllDailyItems(daily);
+          }
+        } catch (e) {
+          console.warn('Failed to merge widget items:', e);
+        }
+      }
+
       setDailyItems(daily);
       setMainPurchases(main);
       setSettings(loadedSettings);
@@ -126,6 +161,16 @@ export function usePokupochki() {
 
   useEffect(() => {
     loadData();
+
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        loadData();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [loadData]);
 
   // Schedule auto sync debounced
@@ -186,10 +231,13 @@ export function usePokupochki() {
   const addDailyItem = useCallback(async (title: string, price?: number) => {
     if (!title.trim()) return;
     const now = new Date().toISOString();
+    const matched = matchProduct(title);
     const newItem: DailyItem = {
       id: 'd_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
       title: title.trim(),
       price: price !== undefined && !isNaN(price) ? Math.max(0, price) : undefined,
+      imageUrl: matched?.image,
+      category: matched?.category,
       completed: false,
       createdAt: now,
       updatedAt: now,
@@ -231,9 +279,13 @@ export function usePokupochki() {
     setDailyItems(prev => {
       const next = prev.map(item => {
         if (item.id === id) {
+          const newTitle = updates.title !== undefined ? updates.title : item.title;
+          const matched = updates.title ? matchProduct(updates.title) : null;
           const updated = {
             ...item,
             ...updates,
+            imageUrl: updates.imageUrl !== undefined ? updates.imageUrl : (matched?.image || item.imageUrl),
+            category: updates.category !== undefined ? updates.category : (matched?.category || item.category),
             updatedAt: now
           };
           db.saveDailyItem(updated);
@@ -302,6 +354,25 @@ export function usePokupochki() {
     scheduleSync(settings);
   }, [settings, scheduleSync]);
 
+  const toggleCompleteMainPurchase = useCallback(async (id: string) => {
+    const now = new Date().toISOString();
+    setMainPurchases(prev => prev.map(item => {
+      if (item.id === id) {
+        const willBeCompleted = !item.completed;
+        const updated = {
+          ...item,
+          completed: willBeCompleted,
+          completedAt: willBeCompleted ? now : undefined,
+          updatedAt: now
+        };
+        db.saveMainPurchase(updated);
+        return updated;
+      }
+      return item;
+    }));
+    scheduleSync(settings);
+  }, [settings, scheduleSync]);
+
   const deleteMainPurchase = useCallback(async (id: string) => {
     setMainPurchases(prev => prev.filter(item => item.id !== id));
     await db.deleteMainPurchase(id);
@@ -343,6 +414,7 @@ export function usePokupochki() {
     // Main actions
     addMainPurchase,
     updateMainPurchase,
+    toggleCompleteMainPurchase,
     deleteMainPurchase,
     // Settings & Sync actions
     updateSettings,
