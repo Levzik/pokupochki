@@ -71,10 +71,11 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {purchases.map((purchase) => (
+          {purchases.map((purchase, idx) => (
             <MainPurchaseCard
               key={purchase.id}
               purchase={purchase}
+              index={idx}
               onClick={() => setSelectedPurchase(purchase)}
               onEdit={() => setSelectedPurchase(purchase)}
               onDelete={() => onDelete(purchase.id)}
@@ -84,13 +85,13 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
           {/* Minimal Bento Quick Add Card */}
           <div
             onClick={() => setIsAddModalOpen(true)}
-            className="rounded-[26px] border-2 border-dashed border-stone-200 hover:border-amber-400/80 bg-white/40 hover:bg-amber-50/20 min-h-[220px] p-6 flex flex-col items-center justify-center text-stone-400 hover:text-stone-800 transition-all duration-200 cursor-pointer group"
+            className="rounded-[28px] border-2 border-dashed border-stone-200/90 hover:border-amber-400 bg-white/50 hover:bg-gradient-to-br hover:from-amber-50/50 hover:to-rose-50/40 min-h-[220px] p-6 flex flex-col items-center justify-center text-stone-400 hover:text-stone-800 transition-all duration-200 cursor-pointer group shadow-2xs"
           >
-            <div className="w-12 h-12 rounded-2xl bg-stone-100 group-hover:bg-[#FED766] group-hover:text-stone-900 flex items-center justify-center text-stone-500 transition-colors mb-2 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-[#F8B4C0]/20 group-hover:bg-[#FED766] group-hover:text-stone-900 flex items-center justify-center text-rose-500 transition-colors mb-2 shadow-xs">
               <Plus className="w-6 h-6 stroke-[2.5]" />
             </div>
-            <span className="text-sm font-bold">Добавить покупку</span>
-            <span className="text-xs text-stone-400 group-hover:text-stone-500 mt-0.5">Новая цель</span>
+            <span className="text-sm font-bold text-stone-700">Добавить покупку</span>
+            <span className="text-xs text-stone-400 group-hover:text-stone-600 mt-0.5">Новая цель</span>
           </div>
         </div>
       )}

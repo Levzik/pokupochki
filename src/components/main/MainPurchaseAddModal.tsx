@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Plus, Sparkles, Image as ImageIcon } from 'lucide-react';
-import { MainPurchase } from '../../types';
+import { X, Plus, Sparkles, Image as ImageIcon, Palette } from 'lucide-react';
+import { MainPurchase, CardColorTheme } from '../../types';
+import { CARD_THEMES } from '../../utils/cardThemes';
 
 interface MainPurchaseAddModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [colorTheme, setColorTheme] = useState<CardColorTheme>('peach');
   const [enablePiggyBank, setEnablePiggyBank] = useState(false);
   const [savedAmount, setSavedAmount] = useState('');
   const [showImagePresets, setShowImagePresets] = useState(false);
@@ -33,6 +35,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
       title: title.trim(),
       price: numPrice,
       imageUrl: imageUrl.trim() || undefined,
+      colorTheme: colorTheme,
       piggyBankEnabled: enablePiggyBank,
       savedAmount: numSaved,
     });
@@ -41,6 +44,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
     setTitle('');
     setPrice('');
     setImageUrl('');
+    setColorTheme('peach');
     setEnablePiggyBank(false);
     setSavedAmount('');
     onClose();
@@ -67,7 +71,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           <div>
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">
               Название товара *
@@ -95,6 +99,33 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
               placeholder="0"
               className="w-full bg-[#FAF8F5] border border-stone-200 rounded-2xl px-4 py-3 text-sm font-semibold text-stone-900 focus:bg-white focus:border-amber-400 transition-colors"
             />
+          </div>
+
+          {/* Color Theme Selector */}
+          <div>
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <Palette className="w-3.5 h-3.5" />
+              <span>Пастельный цвет карточки</span>
+            </label>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {(Object.keys(CARD_THEMES) as CardColorTheme[]).map((themeKey) => {
+                const t = CARD_THEMES[themeKey];
+                const isSelected = colorTheme === themeKey;
+                return (
+                  <button
+                    key={themeKey}
+                    type="button"
+                    onClick={() => setColorTheme(themeKey)}
+                    className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl border text-[11px] font-bold transition-all ${t.bg} ${
+                      isSelected ? 'ring-2 ring-stone-900 border-stone-400 shadow-xs' : 'border-stone-200/80 hover:border-stone-400'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: t.dotColor }} />
+                    <span className="text-stone-700 truncate">{t.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Optional Image */}

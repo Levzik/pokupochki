@@ -10,11 +10,14 @@ export interface DailyItem {
   updatedAt: string;
 }
 
+export type CardColorTheme = 'peach' | 'pink' | 'mint' | 'lavender' | 'vanilla' | 'sky';
+
 export interface MainPurchase {
   id: string;
   title: string;
   price: number;
   imageUrl?: string;
+  colorTheme?: CardColorTheme;
   // Копилка (Piggy bank / Goal savings)
   piggyBankEnabled: boolean;
   savedAmount: number;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Trash2, Check, ExternalLink, ChevronDown, ChevronUp, Image as ImageIcon, Sparkles } from 'lucide-react';
-import { MainPurchase } from '../../types';
+import { X, Trash2, Check, ExternalLink, ChevronDown, ChevronUp, Image as ImageIcon, Sparkles, Palette } from 'lucide-react';
+import { MainPurchase, CardColorTheme } from '../../types';
+import { CARD_THEMES } from '../../utils/cardThemes';
 
 interface MainPurchaseModalProps {
   purchase: MainPurchase | null;
@@ -22,6 +23,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
   const [title, setTitle] = useState(purchase.title);
   const [price, setPrice] = useState(purchase.price.toString());
   const [imageUrl, setImageUrl] = useState(purchase.imageUrl || '');
+  const [colorTheme, setColorTheme] = useState<CardColorTheme | undefined>(purchase.colorTheme);
   const [piggyBankEnabled, setPiggyBankEnabled] = useState(purchase.piggyBankEnabled);
   const [savedAmount, setSavedAmount] = useState(purchase.savedAmount.toString());
   const [note, setNote] = useState(purchase.note || '');
@@ -35,6 +37,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
     setTitle(purchase.title);
     setPrice(purchase.price.toString());
     setImageUrl(purchase.imageUrl || '');
+    setColorTheme(purchase.colorTheme);
     setPiggyBankEnabled(purchase.piggyBankEnabled);
     setSavedAmount(purchase.savedAmount.toString());
     setNote(purchase.note || '');
@@ -54,6 +57,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
       title: title.trim(),
       price: numPrice,
       imageUrl: imageUrl.trim() || undefined,
+      colorTheme: colorTheme || undefined,
       piggyBankEnabled,
       // Persist saved amount even if disabled so re-enabling keeps the state!
       savedAmount: numSaved,
@@ -173,6 +177,33 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
                 placeholder="0"
                 className="w-full bg-[#FAF8F5] border border-stone-200 rounded-2xl px-4 py-3 text-base font-bold text-stone-900 focus:bg-white focus:border-amber-400"
               />
+            </div>
+          </div>
+
+          {/* Color Theme Selector (Pastel palette like in references) */}
+          <div className="bg-[#FAF8F5] border border-stone-200/80 rounded-2xl p-3.5 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-stone-700">
+              <Palette className="w-3.5 h-3.5 text-stone-500" />
+              <span>Пастельный цвет карточки</span>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+              {(Object.keys(CARD_THEMES) as CardColorTheme[]).map((themeKey) => {
+                const t = CARD_THEMES[themeKey];
+                const isSelected = colorTheme === themeKey;
+                return (
+                  <button
+                    key={themeKey}
+                    type="button"
+                    onClick={() => setColorTheme(themeKey)}
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl border text-[11px] font-bold transition-all ${t.bg} ${
+                      isSelected ? 'ring-2 ring-stone-800 shadow-xs border-stone-400' : 'border-stone-200/80 hover:border-stone-400'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: t.dotColor }} />
+                    <span className="text-stone-700">{t.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
