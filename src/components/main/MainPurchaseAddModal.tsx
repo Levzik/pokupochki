@@ -89,6 +89,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
             </label>
             <input
               type="number"
+              inputMode="decimal"
               min="0"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
@@ -169,6 +170,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
               <div className="pt-2 animate-in fade-in">
                 <input
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   value={savedAmount}
                   onChange={(e) => setSavedAmount(e.target.value)}

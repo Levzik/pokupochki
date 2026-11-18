@@ -183,13 +183,13 @@ export function usePokupochki() {
   }, [settings]);
 
   // --- Daily Items Actions ---
-  const addDailyItem = useCallback(async (title: string, price: number) => {
+  const addDailyItem = useCallback(async (title: string, price?: number) => {
     if (!title.trim()) return;
     const now = new Date().toISOString();
     const newItem: DailyItem = {
       id: 'd_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
       title: title.trim(),
-      price: Math.max(0, price || 0),
+      price: price !== undefined && !isNaN(price) ? Math.max(0, price) : undefined,
       completed: false,
       createdAt: now,
       updatedAt: now,

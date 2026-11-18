@@ -171,6 +171,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
               </label>
               <input
                 type="number"
+                inputMode="decimal"
                 min="0"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
@@ -223,6 +224,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     min="0"
                     max={numPrice}
                     value={savedAmount}
@@ -232,18 +234,33 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
                   />
                 </div>
 
+                {percent >= 100 && (
+                  <div className="flex items-center gap-2 bg-emerald-100/80 border border-emerald-200 rounded-xl p-2.5 text-xs font-bold text-emerald-800 animate-in zoom-in-95">
+                    <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Ура! Сумма накоплена полностью! 🎉</span>
+                  </div>
+                )}
+
                 {/* Live Progress Preview */}
                 <div className="space-y-1.5 pt-1">
                   <div className="flex justify-between text-xs font-semibold text-stone-600">
-                    <span>Осталось: {remaining.toLocaleString('ru-RU')} ₽</span>
-                    <span className="font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded-md tabular-nums">
+                    <span>
+                      {remaining > 0 ? `Осталось: ${remaining.toLocaleString('ru-RU')} ₽` : 'Вся сумма собрана!'}
+                    </span>
+                    <span className={`font-bold px-1.5 py-0.5 rounded-md tabular-nums ${
+                      percent >= 100 ? 'text-emerald-700 bg-emerald-50' : 'text-teal-700 bg-teal-50'
+                    }`}>
                       {percent}%
                     </span>
                   </div>
 
                   <div className="w-full h-2.5 bg-stone-200/60 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-teal-400 to-teal-500 rounded-full transition-all duration-200"
+                      className={`h-full rounded-full transition-all duration-300 ${
+                        percent >= 100
+                          ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                          : 'bg-gradient-to-r from-teal-400 to-teal-500'
+                      }`}
                       style={{ width: `${percent}%` }}
                     />
                   </div>

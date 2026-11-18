@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
 
 interface DailyQuickAddProps {
-  onAdd: (title: string, price: number) => void;
+  onAdd: (title: string, price?: number) => void;
 }
 
 export const DailyQuickAdd: React.FC<DailyQuickAddProps> = ({ onAdd }) => {
@@ -14,7 +14,15 @@ export const DailyQuickAdd: React.FC<DailyQuickAddProps> = ({ onAdd }) => {
     if (e) e.preventDefault();
     if (!title.trim()) return;
 
-    const parsedPrice = parseFloat(price.replace(/\s/g, '')) || 0;
+    let parsedPrice: number | undefined = undefined;
+    const cleanPrice = price.trim().replace(/\s/g, '').replace(',', '.');
+    if (cleanPrice !== '') {
+      const p = parseFloat(cleanPrice);
+      if (!isNaN(p)) {
+        parsedPrice = Math.max(0, p);
+      }
+    }
+
     onAdd(title.trim(), parsedPrice);
     
     setTitle('');
@@ -37,10 +45,11 @@ export const DailyQuickAdd: React.FC<DailyQuickAddProps> = ({ onAdd }) => {
         />
       </div>
 
-      {/* Price Input */}
+      {/* Price Input with decimal inputMode and no arrows */}
       <div className="w-24 sm:w-28 relative">
         <input
           type="number"
+          inputMode="decimal"
           min="0"
           step="any"
           value={price}

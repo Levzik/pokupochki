@@ -108,15 +108,6 @@ export const App: React.FC = () => {
         <div className="absolute bottom-24 right-12 w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-purple-100/25 border border-purple-200/35" />
         <div className="absolute bottom-16 right-44 w-16 h-16 rounded-full bg-[#FED766]/20 border border-[#FED766]/30" />
         <div className="absolute bottom-40 left-8 w-5 h-5 rounded-full bg-amber-400/40" />
-
-        {/* Subtle Decorative Bag Mascot (Desktop Background Watermark) */}
-        <div className="hidden lg:block absolute bottom-12 left-10 opacity-15 select-none pointer-events-none transform -rotate-6">
-          <svg className="w-48 h-48 text-[#FED766]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 8V6C8 4.34315 9.34315 3 11 3H13C14.6569 3 16 4.34315 16 6V8" stroke="#78350F" strokeWidth="2" strokeLinecap="round" fill="none" />
-            <path d="M4 8.5C4 7.67157 4.67157 7 5.5 7H18.5C19.3284 7 20 7.67157 20 8.5L19 19.5C19 20.3284 18.3284 21 17.5 21H6.5C5.67157 21 5 20.3284 5 19.5L4 8.5Z" stroke="#78350F" strokeWidth="1.5" />
-            <path d="M9.5 13C10.5 14.5 13.5 14.5 14.5 13" stroke="#78350F" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-          </svg>
-        </div>
       </div>
 
       {/* Top Header */}

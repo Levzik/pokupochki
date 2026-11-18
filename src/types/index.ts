@@ -3,7 +3,7 @@ export type ActiveTab = 'main' | 'daily' | 'stats' | 'settings';
 export interface DailyItem {
   id: string;
   title: string;
-  price: number;
+  price?: number;
   completed: boolean;
   completedAt?: string;
   createdAt: string;

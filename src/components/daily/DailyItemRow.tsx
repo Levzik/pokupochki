@@ -17,7 +17,9 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(item.title);
-  const [editPrice, setEditPrice] = useState(item.price ? item.price.toString() : '');
+  const [editPrice, setEditPrice] = useState(
+    item.price !== undefined && item.price !== null ? item.price.toString() : ''
+  );
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -31,10 +33,18 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
       onDelete(item.id);
       return;
     }
-    const parsedPrice = parseFloat(editPrice) || 0;
+    let parsedPrice: number | undefined = undefined;
+    const cleanPrice = editPrice.trim().replace(/\s/g, '').replace(',', '.');
+    if (cleanPrice !== '') {
+      const p = parseFloat(cleanPrice);
+      if (!isNaN(p)) {
+        parsedPrice = Math.max(0, p);
+      }
+    }
+
     onUpdate(item.id, {
       title: editTitle.trim(),
-      price: Math.max(0, parsedPrice)
+      price: parsedPrice
     });
     setIsEditing(false);
   };
@@ -44,7 +54,7 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
       handleSave();
     } else if (e.key === 'Escape') {
       setEditTitle(item.title);
-      setEditPrice(item.price ? item.price.toString() : '');
+      setEditPrice(item.price !== undefined && item.price !== null ? item.price.toString() : '');
       setIsEditing(false);
     }
   };
@@ -64,6 +74,9 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
         <div className="relative w-24">
           <input
             type="number"
+            inputMode="decimal"
+            min="0"
+            step="any"
             value={editPrice}
             onChange={(e) => setEditPrice(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -74,7 +87,7 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
         </div>
         <button
           onClick={handleSave}
-          className="p-1.5 bg-[#FED766] hover:bg-[#FDC830] text-stone-900 rounded-xl transition-colors"
+          className="p-1.5 bg-[#FED766] hover:bg-[#FDC830] active:scale-95 text-stone-900 rounded-xl transition-all"
           title="Сохранить"
         >
           <Check className="w-4 h-4 stroke-[2.5]" />
@@ -82,7 +95,7 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
         <button
           onClick={() => {
             setEditTitle(item.title);
-            setEditPrice(item.price ? item.price.toString() : '');
+            setEditPrice(item.price !== undefined && item.price !== null ? item.price.toString() : '');
             setIsEditing(false);
           }}
           className="p-1.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl transition-colors"
@@ -102,20 +115,20 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
           type="button"
           onClick={() => onToggle(item.id)}
           aria-label={item.completed ? "Отметить как некупленное" : "Отметить как купленное"}
-          className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-200 shrink-0 ${
+          className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-200 shrink-0 active:scale-90 ${
             item.completed
               ? 'bg-[#F8B4C0] border-[#F8B4C0] text-white shadow-xs'
-              : 'border-2 border-stone-300 hover:border-amber-400 bg-white'
+              : 'border-2 border-stone-300 hover:border-amber-400 bg-white hover:scale-105'
           }`}
         >
-          {item.completed && <Check className="w-4 h-4 stroke-[3]" />}
+          {item.completed && <Check className="w-4 h-4 stroke-[3] animate-in zoom-in-75 duration-150" />}
         </button>
 
         <span
           onClick={() => setIsEditing(true)}
-          className={`text-base font-semibold truncate cursor-pointer transition-all duration-150 ${
+          className={`text-base font-semibold truncate cursor-pointer transition-all duration-200 ${
             item.completed
-              ? 'line-through text-stone-400 font-normal'
+              ? 'line-through text-stone-400 font-normal decoration-stone-300'
               : 'text-stone-800 hover:text-stone-950'
           }`}
           title="Нажмите для редактирования"
@@ -128,12 +141,18 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <span
           onClick={() => setIsEditing(true)}
-          className={`text-base font-bold tabular-nums cursor-pointer px-1 py-0.5 rounded hover:bg-stone-100 transition-colors ${
+          className={`text-sm sm:text-base font-bold tabular-nums cursor-pointer px-1.5 py-0.5 rounded hover:bg-stone-100 transition-colors ${
             item.completed ? 'text-stone-400 line-through font-normal' : 'text-stone-900'
           }`}
           title="Нажмите для редактирования цены"
         >
-          {item.price ? `${item.price.toLocaleString('ru-RU')} ₽` : '0 ₽'}
+          {item.price === undefined || item.price === null ? (
+            <span className="text-stone-300 font-medium select-none" title="Цена не указана">—</span>
+          ) : item.price === 0 ? (
+            <span className="text-stone-500 font-semibold">0 ₽</span>
+          ) : (
+            <span>{item.price.toLocaleString('ru-RU')} ₽</span>
+          )}
         </span>
 
         {/* Quick action buttons (revealed on hover or on mobile) */}
