@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T17:14:39.794Z",
+  "exportedAt": "2026-11-19T17:42:11.309Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -15,11 +15,12 @@
       "id": "d-2",
       "title": "Молоко",
       "price": 130,
-      "completed": false,
+      "completed": true,
       "createdAt": "2026-11-18T17:53:26.601Z",
-      "updatedAt": "2026-11-19T08:37:47.465Z",
+      "updatedAt": "2026-11-19T17:05:19.238Z",
       "imageUrl": "./products/milk.jpg",
-      "category": "Молочные продукты и яйца"
+      "category": "Молочные продукты и яйца",
+      "completedAt": "2026-11-19T17:05:19.238Z"
     },
     {
       "id": "d-3",
@@ -173,6 +174,15 @@
       "completed": false,
       "createdAt": "2026-11-19T16:18:51.516Z",
       "updatedAt": "2026-11-19T16:18:51.516Z"
+    },
+    {
+      "id": "d_1795106521268_z3gjw",
+      "title": "помидоры",
+      "imageUrl": "./products/tomatoes.jpg",
+      "category": "Овощи, фрукты и зелень",
+      "completed": false,
+      "createdAt": "2026-11-19T16:42:01.268Z",
+      "updatedAt": "2026-11-19T16:42:01.268Z"
     }
   ],
   "mainPurchases": [
@@ -238,5 +248,5 @@
       "updatedAt": "2026-11-19T16:05:09.974Z"
     }
   ],
-  "lastModified": "2026-11-19T17:14:39.794Z"
+  "lastModified": "2026-11-19T17:42:11.309Z"
 }
