@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T16:12:53.115Z",
+  "exportedAt": "2026-11-19T16:13:59.789Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -59,6 +59,15 @@
       "completed": false,
       "createdAt": "2026-11-19T16:12:26.751Z",
       "updatedAt": "2026-11-19T16:12:26.751Z"
+    },
+    {
+      "id": "d_1795104782488_tgwcr",
+      "title": "Морковь",
+      "imageUrl": "./products/carrots.jpg",
+      "category": "Овощи, фрукты и зелень",
+      "completed": false,
+      "createdAt": "2026-11-19T16:13:02.488Z",
+      "updatedAt": "2026-11-19T16:13:35.284Z"
     }
   ],
   "mainPurchases": [
@@ -124,5 +133,5 @@
       "updatedAt": "2026-11-19T16:05:09.974Z"
     }
   ],
-  "lastModified": "2026-11-19T16:12:53.115Z"
+  "lastModified": "2026-11-19T16:13:59.789Z"
 }
