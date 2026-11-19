@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T17:43:40.159Z",
+  "exportedAt": "2026-11-19T17:45:03.377Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -9,7 +9,8 @@
       "completed": true,
       "createdAt": "2026-11-18T15:17:23.750Z",
       "updatedAt": "2026-11-19T14:33:36.925Z",
-      "completedAt": "2026-11-19T14:33:36.925Z"
+      "completedAt": "2026-11-19T14:33:36.925Z",
+      "order": 21
     },
     {
       "id": "d-2",
@@ -20,7 +21,8 @@
       "updatedAt": "2026-11-19T17:05:19.238Z",
       "imageUrl": "./products/milk.jpg",
       "category": "Молочные продукты и яйца",
-      "completedAt": "2026-11-19T17:05:19.238Z"
+      "completedAt": "2026-11-19T17:05:19.238Z",
+      "order": 20
     },
     {
       "id": "d-3",
@@ -28,7 +30,8 @@
       "price": 270,
       "completed": false,
       "createdAt": "2026-11-18T18:53:26.601Z",
-      "updatedAt": "2026-11-18T18:53:26.601Z"
+      "updatedAt": "2026-11-18T18:53:26.601Z",
+      "order": 19
     },
     {
       "id": "d_1795077472837_bkmsr",
@@ -37,7 +40,8 @@
       "category": "Бакалея и крупы",
       "completed": false,
       "createdAt": "2026-11-19T08:37:52.837Z",
-      "updatedAt": "2026-11-19T08:37:52.837Z"
+      "updatedAt": "2026-11-19T08:37:52.837Z",
+      "order": 18
     },
     {
       "id": "d_1795098386690_tvi5v",
@@ -47,21 +51,24 @@
       "category": "Сладости и десерты",
       "completed": false,
       "createdAt": "2026-11-19T14:26:26.690Z",
-      "updatedAt": "2026-11-19T17:42:26.759Z"
+      "updatedAt": "2026-11-19T17:42:26.759Z",
+      "order": 17
     },
     {
       "id": "d_1795104338060_o5vti",
       "title": "Драники",
       "completed": false,
       "createdAt": "2026-11-19T16:05:38.060Z",
-      "updatedAt": "2026-11-19T16:05:38.060Z"
+      "updatedAt": "2026-11-19T16:05:38.060Z",
+      "order": 16
     },
     {
       "id": "d_1795104746751_828oz",
       "title": "печенье",
       "completed": false,
       "createdAt": "2026-11-19T16:12:26.751Z",
-      "updatedAt": "2026-11-19T16:12:26.751Z"
+      "updatedAt": "2026-11-19T16:12:26.751Z",
+      "order": 15
     },
     {
       "id": "d_1795104782488_tgwcr",
@@ -70,14 +77,16 @@
       "category": "Овощи, фрукты и зелень",
       "completed": false,
       "createdAt": "2026-11-19T16:13:02.488Z",
-      "updatedAt": "2026-11-19T16:13:35.284Z"
+      "updatedAt": "2026-11-19T16:13:35.284Z",
+      "order": 14
     },
     {
       "id": "d_1795104853524_gmawu",
       "title": "Колбаса",
       "completed": false,
       "createdAt": "2026-11-19T16:14:13.524Z",
-      "updatedAt": "2026-11-19T16:14:13.524Z"
+      "updatedAt": "2026-11-19T16:14:13.524Z",
+      "order": 13
     },
     {
       "id": "d_1795104863565_pkenv",
@@ -86,7 +95,8 @@
       "category": "Мясо, птица и рыба",
       "completed": false,
       "createdAt": "2026-11-19T16:14:23.565Z",
-      "updatedAt": "2026-11-19T16:14:23.565Z"
+      "updatedAt": "2026-11-19T16:14:23.565Z",
+      "order": 12
     },
     {
       "id": "d_1795104868910_6jh4r",
@@ -95,7 +105,8 @@
       "category": "Мясо, птица и рыба",
       "completed": false,
       "createdAt": "2026-11-19T16:14:28.910Z",
-      "updatedAt": "2026-11-19T16:14:35.952Z"
+      "updatedAt": "2026-11-19T16:14:35.952Z",
+      "order": 11
     },
     {
       "id": "d_1795104924736_2lzu1",
@@ -104,28 +115,32 @@
       "category": "Овощи, фрукты и зелень",
       "completed": false,
       "createdAt": "2026-11-19T16:15:24.735Z",
-      "updatedAt": "2026-11-19T16:15:24.735Z"
+      "updatedAt": "2026-11-19T16:15:24.735Z",
+      "order": 10
     },
     {
       "id": "d_1795104961654_0j44j",
       "title": "Свекла",
       "completed": false,
       "createdAt": "2026-11-19T16:16:01.654Z",
-      "updatedAt": "2026-11-19T16:16:01.654Z"
+      "updatedAt": "2026-11-19T16:16:01.654Z",
+      "order": 9
     },
     {
       "id": "d_1795105085070_p9lci",
       "title": "грибы",
       "completed": false,
       "createdAt": "2026-11-19T16:18:05.070Z",
-      "updatedAt": "2026-11-19T16:18:05.070Z"
+      "updatedAt": "2026-11-19T16:18:05.070Z",
+      "order": 8
     },
     {
       "id": "d_1795105089017_qs45h",
       "title": "Грибы",
       "completed": false,
       "createdAt": "2026-11-19T16:18:09.017Z",
-      "updatedAt": "2026-11-19T16:18:09.017Z"
+      "updatedAt": "2026-11-19T16:18:09.017Z",
+      "order": 7
     },
     {
       "id": "d_1795105099963_u2d0j",
@@ -134,7 +149,8 @@
       "category": "Овощи, фрукты и зелень",
       "completed": false,
       "createdAt": "2026-11-19T16:18:19.963Z",
-      "updatedAt": "2026-11-19T16:18:19.963Z"
+      "updatedAt": "2026-11-19T16:18:19.963Z",
+      "order": 6
     },
     {
       "id": "d_1795105107678_4wglr",
@@ -143,14 +159,16 @@
       "category": "Овощи, фрукты и зелень",
       "completed": false,
       "createdAt": "2026-11-19T16:18:27.678Z",
-      "updatedAt": "2026-11-19T16:18:27.678Z"
+      "updatedAt": "2026-11-19T16:18:27.678Z",
+      "order": 0
     },
     {
       "id": "d_1795105114908_ft9qq",
       "title": "картшкп",
       "completed": false,
       "createdAt": "2026-11-19T16:18:34.907Z",
-      "updatedAt": "2026-11-19T16:18:34.907Z"
+      "updatedAt": "2026-11-19T16:18:34.907Z",
+      "order": 1
     },
     {
       "id": "d_1795105123323_firnn",
@@ -159,7 +177,8 @@
       "category": "Молочные продукты и яйца",
       "completed": false,
       "createdAt": "2026-11-19T16:18:43.323Z",
-      "updatedAt": "2026-11-19T16:18:43.323Z"
+      "updatedAt": "2026-11-19T16:18:43.323Z",
+      "order": 2
     },
     {
       "id": "d_1795105128234_1ulw4",
@@ -168,14 +187,16 @@
       "category": "Заморозка и напитки",
       "completed": false,
       "createdAt": "2026-11-19T16:18:48.234Z",
-      "updatedAt": "2026-11-19T16:18:48.234Z"
+      "updatedAt": "2026-11-19T16:18:48.234Z",
+      "order": 4
     },
     {
       "id": "d_1795105131516_44s0j",
       "title": "пицца",
       "completed": false,
       "createdAt": "2026-11-19T16:18:51.516Z",
-      "updatedAt": "2026-11-19T16:18:51.516Z"
+      "updatedAt": "2026-11-19T16:18:51.516Z",
+      "order": 3
     },
     {
       "id": "d_1795106521268_z3gjw",
@@ -184,7 +205,8 @@
       "category": "Овощи, фрукты и зелень",
       "completed": false,
       "createdAt": "2026-11-19T16:42:01.268Z",
-      "updatedAt": "2026-11-19T16:42:01.268Z"
+      "updatedAt": "2026-11-19T16:42:01.268Z",
+      "order": 5
     }
   ],
   "mainPurchases": [
@@ -253,7 +275,27 @@
       "createdAt": "2026-11-19T12:41:53.267Z",
       "updatedAt": "2026-11-19T16:05:09.974Z",
       "order": 2
+    },
+    {
+      "id": "m_1795110300142_ei3uc",
+      "title": "укпук",
+      "price": 0,
+      "piggyBankEnabled": false,
+      "savedAmount": 0,
+      "completed": false,
+      "createdAt": "2026-11-19T17:45:00.142Z",
+      "updatedAt": "2026-11-19T17:45:00.142Z"
+    },
+    {
+      "id": "m_1795110302802_rrfuh",
+      "title": "уцауц",
+      "price": 0,
+      "piggyBankEnabled": false,
+      "savedAmount": 0,
+      "completed": false,
+      "createdAt": "2026-11-19T17:45:02.802Z",
+      "updatedAt": "2026-11-19T17:45:02.802Z"
     }
   ],
-  "lastModified": "2026-11-19T17:43:40.159Z"
+  "lastModified": "2026-11-19T17:45:03.377Z"
 }
