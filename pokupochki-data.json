@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T16:11:32.867Z",
+  "exportedAt": "2026-11-19T16:12:53.115Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -52,6 +52,13 @@
       "completed": false,
       "createdAt": "2026-11-19T16:05:38.060Z",
       "updatedAt": "2026-11-19T16:05:38.060Z"
+    },
+    {
+      "id": "d_1795104746751_828oz",
+      "title": "печенье",
+      "completed": false,
+      "createdAt": "2026-11-19T16:12:26.751Z",
+      "updatedAt": "2026-11-19T16:12:26.751Z"
     }
   ],
   "mainPurchases": [
@@ -117,5 +124,5 @@
       "updatedAt": "2026-11-19T16:05:09.974Z"
     }
   ],
-  "lastModified": "2026-11-19T16:11:32.867Z"
+  "lastModified": "2026-11-19T16:12:53.115Z"
 }
