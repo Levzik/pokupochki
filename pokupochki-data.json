@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T16:15:22.649Z",
+  "exportedAt": "2026-11-19T16:18:03.182Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -93,6 +93,22 @@
       "completed": false,
       "createdAt": "2026-11-19T16:14:28.910Z",
       "updatedAt": "2026-11-19T16:14:35.952Z"
+    },
+    {
+      "id": "d_1795104924736_2lzu1",
+      "title": "Лук",
+      "imageUrl": "./products/onion.jpg",
+      "category": "Овощи, фрукты и зелень",
+      "completed": false,
+      "createdAt": "2026-11-19T16:15:24.735Z",
+      "updatedAt": "2026-11-19T16:15:24.735Z"
+    },
+    {
+      "id": "d_1795104961654_0j44j",
+      "title": "Свекла",
+      "completed": false,
+      "createdAt": "2026-11-19T16:16:01.654Z",
+      "updatedAt": "2026-11-19T16:16:01.654Z"
     }
   ],
   "mainPurchases": [
@@ -158,5 +174,5 @@
       "updatedAt": "2026-11-19T16:05:09.974Z"
     }
   ],
-  "lastModified": "2026-11-19T16:15:22.649Z"
+  "lastModified": "2026-11-19T16:18:03.182Z"
 }
