@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "exportedAt": "2026-11-19T14:25:13.528Z",
+  "dailyItems": [
+    {
+      "id": "d-1",
+      "title": "Хлеб",
+      "price": 90,
+      "completed": false,
+      "createdAt": "2026-11-18T15:16:37.515Z",
+      "updatedAt": "2026-11-18T15:16:37.515Z"
+    },
+    {
+      "id": "d-2",
+      "title": "Молоко",
+      "price": 130,
+      "completed": false,
+      "createdAt": "2026-11-18T16:16:37.515Z",
+      "updatedAt": "2026-11-18T16:16:37.515Z"
+    },
+    {
+      "id": "d-3",
+      "title": "Чай",
+      "price": 270,
+      "completed": false,
+      "createdAt": "2026-11-18T17:16:37.515Z",
+      "updatedAt": "2026-11-18T17:16:37.515Z"
+    }
+  ],
+  "mainPurchases": [
+    {
+      "id": "m-1",
+      "title": "Монитор",
+      "price": 45000,
+      "imageUrl": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80",
+      "piggyBankEnabled": true,
+      "savedAmount": 12000,
+      "category": "Электроника",
+      "note": "4K IPS 27 дюймов для работы",
+      "completed": false,
+      "createdAt": "2026-11-13T17:16:37.515Z",
+      "updatedAt": "2026-11-13T17:16:37.515Z"
+    },
+    {
+      "id": "m-2",
+      "title": "Наушники",
+      "price": 18000,
+      "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+      "piggyBankEnabled": false,
+      "savedAmount": 6000,
+      "category": "Гаджеты",
+      "note": "Беспроводные с шумоподавлением",
+      "completed": false,
+      "createdAt": "2026-11-15T17:16:37.515Z",
+      "updatedAt": "2026-11-15T17:16:37.515Z"
+    },
+    {
+      "id": "m-3",
+      "title": "Гитара",
+      "price": 32000,
+      "imageUrl": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&auto=format&fit=crop&q=80",
+      "piggyBankEnabled": false,
+      "savedAmount": 0,
+      "category": "Хобби",
+      "note": "Электрогитара типа Stratocaster",
+      "completed": false,
+      "createdAt": "2026-11-17T17:16:37.515Z",
+      "updatedAt": "2026-11-17T17:16:37.515Z"
+    }
+  ],
+  "lastModified": "2026-11-19T14:25:13.528Z"
+}
