@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DailyItem, MainPurchase, SyncSettings } from '../types';
 import { db } from '../services/db';
-import { githubSync } from '../services/githubSync';
+import { githubSync, base64ToUtf8 } from '../services/githubSync';
 import { matchProduct } from '../data/productCatalog';
 
 // Initial demo items matching the visual references if DB is freshly opened
@@ -110,7 +110,30 @@ export function usePokupochki() {
     try {
       let daily = await db.getAllDailyItems();
       let main = await db.getAllMainPurchases();
-      const loadedSettings = await db.getSettings();
+      let loadedSettings = await db.getSettings();
+
+      // Check URL hash for pairing link (#sync=<base64-payload>)
+      if (typeof window !== 'undefined' && window.location.hash.includes('sync=')) {
+        try {
+          const match = window.location.hash.match(/sync=([^&]+)/);
+          if (match && match[1]) {
+            const rawJson = base64ToUtf8(decodeURIComponent(match[1]));
+            const parsed = JSON.parse(rawJson);
+            if (parsed.githubToken && parsed.githubRepo) {
+              loadedSettings = {
+                ...loadedSettings,
+                ...parsed,
+                autoSync: true,
+              };
+              await db.saveSettings(loadedSettings);
+              // Clean hash without reload
+              window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to parse sync hash:', e);
+        }
+      }
 
       // Seed initial demo data on fresh install
       if (daily.length === 0 && main.length === 0) {
@@ -152,26 +175,30 @@ export function usePokupochki() {
       setMainPurchases(main);
       setSettings(loadedSettings);
       syncToAndroidBridge(daily);
+
+      // Automatic background sync on app launch if configured
+      if (loadedSettings.autoSync && loadedSettings.githubToken && loadedSettings.githubRepo && navigator.onLine) {
+        githubSync.sync(loadedSettings).then(async (res) => {
+          if (res.success) {
+            const freshDaily = await db.getAllDailyItems();
+            const freshMain = await db.getAllMainPurchases();
+            setDailyItems(freshDaily);
+            setMainPurchases(freshMain);
+            syncToAndroidBridge(freshDaily);
+            setSettings(prev => ({
+              ...prev,
+              syncStatus: 'synced',
+              lastSyncTime: res.lastSyncTime || new Date().toISOString()
+            }));
+          }
+        }).catch(e => console.warn('Boot sync error:', e));
+      }
     } catch (err) {
       console.error('Failed to load from IndexedDB:', err);
     } finally {
       setIsLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    loadData();
-
-    const handleVisibility = () => {
-      if (!document.hidden) {
-        loadData();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, [loadData]);
 
   // Schedule auto sync debounced
   const scheduleSync = useCallback((currentSettings: SyncSettings) => {
@@ -184,6 +211,13 @@ export function usePokupochki() {
     syncTimeoutRef.current = setTimeout(async () => {
       setSettings(prev => ({ ...prev, syncStatus: 'syncing' }));
       const result = await githubSync.sync(currentSettings);
+      if (result.success) {
+        const updatedDaily = await db.getAllDailyItems();
+        const updatedMain = await db.getAllMainPurchases();
+        setDailyItems(updatedDaily);
+        setMainPurchases(updatedMain);
+        syncToAndroidBridge(updatedDaily);
+      }
       setSettings(prev => {
         const next: SyncSettings = {
           ...prev,
@@ -194,18 +228,24 @@ export function usePokupochki() {
         db.saveSettings(next);
         return next;
       });
-    }, 2000);
+    }, 1500);
   }, []);
 
   // Manual Trigger Sync
   const triggerSync = useCallback(async () => {
+    if (!settings.githubToken || !settings.githubRepo) {
+      return { success: false, message: 'Синхронизация не настроена' };
+    }
     setSettings(prev => ({ ...prev, syncStatus: 'syncing', lastError: undefined }));
     const result = await githubSync.sync(settings);
     // Reload local DB after sync to pick up remote merges
-    const updatedDaily = await db.getAllDailyItems();
-    const updatedMain = await db.getAllMainPurchases();
-    setDailyItems(updatedDaily);
-    setMainPurchases(updatedMain);
+    if (result.success) {
+      const updatedDaily = await db.getAllDailyItems();
+      const updatedMain = await db.getAllMainPurchases();
+      setDailyItems(updatedDaily);
+      setMainPurchases(updatedMain);
+      syncToAndroidBridge(updatedDaily);
+    }
 
     setSettings(prev => {
       const next: SyncSettings = {
@@ -219,6 +259,35 @@ export function usePokupochki() {
     });
     return result;
   }, [settings]);
+
+  useEffect(() => {
+    loadData();
+
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        loadData();
+        if (settings.autoSync && settings.githubToken && settings.githubRepo && navigator.onLine) {
+          triggerSync();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // Periodic automatic background sync every 15 seconds when window is active
+    let interval: NodeJS.Timeout | null = null;
+    if (settings.autoSync && settings.githubToken && settings.githubRepo) {
+      interval = setInterval(() => {
+        if (!document.hidden && navigator.onLine) {
+          triggerSync();
+        }
+      }, 15000);
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      if (interval) clearInterval(interval);
+    };
+  }, [loadData, settings.autoSync, settings.githubToken, settings.githubRepo, triggerSync]);
 
   // Save Settings
   const updateSettings = useCallback(async (newSettings: Partial<SyncSettings>) => {

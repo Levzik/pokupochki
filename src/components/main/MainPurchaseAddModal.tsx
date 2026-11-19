@@ -109,14 +109,22 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
         className="bg-white rounded-[32px] w-full max-w-md shadow-2xl border border-stone-100 overflow-hidden flex flex-col max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Full-bleed Airy Image Hero / Preview */}
-        <div className="relative w-full h-48 sm:h-52 bg-stone-100 shrink-0 overflow-hidden">
+        {/* Full-bleed Airy Image Hero / Preview with Ambient Backdrop */}
+        <div className="relative w-full h-52 sm:h-56 bg-stone-900/5 shrink-0 overflow-hidden flex items-center justify-center">
           {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt=""
-              className="w-full h-full object-cover"
-            />
+            <>
+              <img
+                src={imageUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-40 pointer-events-none"
+              />
+              <img
+                src={imageUrl}
+                alt=""
+                className="relative z-[1] w-full h-full object-contain p-2 drop-shadow-sm"
+              />
+            </>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-1.5 bg-gradient-to-b from-[#FAF8F5] to-stone-100">
               <div className="w-12 h-12 rounded-2xl bg-white shadow-2xs flex items-center justify-center text-stone-300">

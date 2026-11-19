@@ -1,23 +1,29 @@
 import { AppData, DailyItem, MainPurchase, SyncSettings } from '../types';
 import { db } from './db';
 
-// Unicode-safe Base64 encoding and decoding
-function utf8ToBase64(str: string): string {
-  return window.btoa(
-    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
-      String.fromCharCode(parseInt(p1, 16))
-    )
-  );
+// High-performance, chunked Unicode-safe Base64 encoding/decoding
+// Safely handles large JSON snapshots with base64 images without call stack limits
+export function utf8ToBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  const len = bytes.byteLength;
+  const chunkSize = 0x8000; // 32KB chunks
+  for (let i = 0; i < len; i += chunkSize) {
+    const chunk = bytes.subarray(i, Math.min(i + chunkSize, len));
+    binary += String.fromCharCode.apply(null, chunk as unknown as number[]);
+  }
+  return window.btoa(binary);
 }
 
-function base64ToUtf8(str: string): string {
-  return decodeURIComponent(
-    Array.prototype.map
-      .call(window.atob(str), (c: string) => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join('')
-  );
+export function base64ToUtf8(base64: string): string {
+  const clean = base64.replace(/\s+/g, '');
+  const binary = window.atob(clean);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
 }
 
 export interface SyncResult {

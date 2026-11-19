@@ -11,11 +11,13 @@ import {
   EyeOff, 
   Smartphone,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Copy,
+  Link2,
+  Sparkles
 } from 'lucide-react';
 import { SyncSettings } from '../../types';
-import { githubSync } from '../../services/githubSync';
-import { cloudSync } from '../../services/cloudSync';
+import { githubSync, utf8ToBase64, base64ToUtf8 } from '../../services/githubSync';
 import { exportBackupToFile, importBackupFromFile } from '../../services/exportImport';
 
 interface SettingsViewProps {
@@ -40,22 +42,65 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [autoSync, setAutoSync] = useState(settings.autoSync);
   const [showToken, setShowToken] = useState(false);
 
-  const [cloudRoom, setCloudRoom] = useState(() => localStorage.getItem('pokupochki_cloud_room') || 'levzik');
-  const [cloudSyncing, setCloudSyncing] = useState(false);
-  const [cloudFeedback, setCloudFeedback] = useState<string | null>(null);
+  const [pasteLink, setPasteLink] = useState('');
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const handleCloudSync = async () => {
-    if (!cloudRoom.trim()) return;
-    localStorage.setItem('pokupochki_cloud_room', cloudRoom.trim());
-    setCloudSyncing(true);
-    setCloudFeedback(null);
-    const res = await cloudSync.sync(cloudRoom.trim());
-    setCloudSyncing(false);
-    setCloudFeedback(res.message);
-    if (res.success) {
-      onDataReloaded();
+  const getPairingUrl = () => {
+    if (!token.trim() || !repo.trim()) return '';
+    const payload = JSON.stringify({
+      githubToken: token.trim(),
+      githubRepo: repo.trim(),
+      githubBranch: branch.trim() || 'main',
+      githubFilePath: filePath.trim() || 'pokupochki-data.json',
+    });
+    const b64 = utf8ToBase64(payload);
+    return `https://levzik.github.io/pokupochki/#sync=${b64}`;
+  };
+
+  const handleCopyPairingLink = async () => {
+    const url = getPairingUrl();
+    if (!url) {
+      alert('Сначала заполните GitHub Token и Репозиторий ниже');
+      return;
     }
-    setTimeout(() => setCloudFeedback(null), 4000);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 3000);
+    } catch {
+      prompt('Скопируйте ссылку для телефона:', url);
+    }
+  };
+
+  const handleApplyPasteLink = () => {
+    if (!pasteLink.trim()) return;
+    try {
+      let b64 = pasteLink.trim();
+      if (b64.includes('sync=')) {
+        b64 = b64.split('sync=')[1].split('&')[0];
+      }
+      const json = JSON.parse(base64ToUtf8(b64));
+      if (json.githubToken && json.githubRepo) {
+        setToken(json.githubToken);
+        setRepo(json.githubRepo);
+        if (json.githubBranch) setBranch(json.githubBranch);
+        if (json.githubFilePath) setFilePath(json.githubFilePath);
+        setAutoSync(true);
+        onUpdateSettings({
+          githubToken: json.githubToken,
+          githubRepo: json.githubRepo,
+          githubBranch: json.githubBranch || 'main',
+          githubFilePath: json.githubFilePath || 'pokupochki-data.json',
+          autoSync: true,
+        });
+        setTestResult({ success: true, message: 'Настройки синхронизации успешно применены!' });
+        setTimeout(() => {
+          onTriggerSync();
+        }, 300);
+      }
+    } catch {
+      alert('Не удалось прочитать ссылку подключения. Проверьте правильность.');
+    }
   };
 
   const [testingConnection, setTestingConnection] = useState(false);
@@ -132,55 +177,78 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </p>
       </div>
 
-      {/* 1-Click Cloud Sync between APK and https://levzik.github.io/pokupochki/ */}
+      {/* 1-Click Cross-Device Sync (Phone <-> PC) */}
       <div className="bg-gradient-to-br from-amber-50/90 to-orange-50/70 rounded-[28px] p-6 shadow-soft border border-amber-200/80 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#FED766] text-stone-900 flex items-center justify-center font-black text-lg shadow-xs">
-              ⚡
+              <Smartphone className="w-5 h-5 text-stone-900" />
             </div>
             <div>
               <h3 className="text-base font-bold text-stone-900 leading-tight">
-                Синхронизация APK с сайтом
+                Связка телефона и компьютера
               </h3>
               <p className="text-xs text-stone-600 font-medium">
-                Мгновенный обмен данными между Android APK и levzik.github.io/pokupochki
+                Мгновенное автоматическое подключение без ручного ввода токенов
               </p>
             </div>
           </div>
         </div>
 
         <p className="text-xs text-stone-600 leading-relaxed">
-          Введите одинаковый код синхронизации на телефоне и на сайте (по умолчанию <code className="bg-amber-100/80 px-1.5 py-0.5 rounded font-bold text-stone-800">levzik</code>), чтобы данные на обоих устройствах объединились:
+          Чтобы сайт на ПК и APK на телефоне обновлялись одновременно, скопируйте ссылку подключения на одном устройстве и откройте на другом:
         </p>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-          <input
-            type="text"
-            value={cloudRoom}
-            onChange={(e) => setCloudRoom(e.target.value)}
-            placeholder="Код синхронизации (например: levzik)"
-            className="flex-1 bg-white border border-amber-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-stone-900 focus:border-amber-400 shadow-2xs"
-          />
           <button
             type="button"
-            onClick={handleCloudSync}
-            disabled={cloudSyncing || !cloudRoom.trim()}
-            className="py-2.5 px-5 rounded-2xl bg-gradient-to-r from-[#FED766] to-[#FDBF3B] hover:brightness-105 active:scale-95 text-stone-900 font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 shrink-0"
+            onClick={handleCopyPairingLink}
+            className="py-3 px-5 rounded-2xl bg-stone-900 hover:bg-stone-800 active:scale-95 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm transition-all shrink-0"
           >
-            {cloudSyncing ? (
-              <RefreshCw className="w-4 h-4 animate-spin text-stone-900" />
+            {copySuccess ? (
+              <>
+                <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+                <span>Ссылка скопирована!</span>
+              </>
             ) : (
-              <span>⚡ Синхронизировать сейчас</span>
+              <>
+                <Copy className="w-4 h-4" />
+                <span>Скопировать ссылку для телефона</span>
+              </>
             )}
           </button>
         </div>
 
-        {cloudFeedback && (
-          <p className="text-xs font-bold text-emerald-700 animate-in fade-in">
-            ✓ {cloudFeedback}
+        {copySuccess && (
+          <p className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl animate-in fade-in">
+            ✓ Ссылка скопирована! Отправьте её себе в Telegram/мессенджер и откройте на телефоне (или вставьте в поле ниже на телефоне).
           </p>
         )}
+
+        {/* Option to paste pairing link on mobile */}
+        <div className="pt-2 border-t border-amber-200/60">
+          <label className="block text-xs font-bold text-stone-700 mb-1.5 flex items-center gap-1.5">
+            <Link2 className="w-3.5 h-3.5 text-stone-600" />
+            <span>Или вставьте ссылку / код подключения с компьютера:</span>
+          </label>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={pasteLink}
+              onChange={(e) => setPasteLink(e.target.value)}
+              placeholder="Вставьте ссылку https://...#sync=... или код"
+              className="flex-1 bg-white border border-amber-200 rounded-2xl px-4 py-2.5 text-xs font-mono text-stone-900 focus:border-amber-400 shadow-2xs"
+            />
+            <button
+              type="button"
+              onClick={handleApplyPasteLink}
+              disabled={!pasteLink.trim()}
+              className="py-2.5 px-5 rounded-2xl bg-gradient-to-r from-[#FED766] to-[#FDBF3B] hover:brightness-105 active:scale-95 text-stone-900 font-extrabold text-xs shadow-sm transition-all disabled:opacity-50 shrink-0"
+            >
+              Подключить
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* GitHub Sync Card */}

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokupochki-v2';
+const CACHE_NAME = 'pokupochki-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',

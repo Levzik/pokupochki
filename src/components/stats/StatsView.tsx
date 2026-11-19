@@ -299,23 +299,25 @@ export const StatsView: React.FC<StatsViewProps> = ({ dailyItems, mainPurchases 
 
         {/* Selected Product Highlight Card */}
         {selectedProduct !== 'all' && (
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 overflow-hidden shadow-xs">
+            <div className="flex items-center gap-3.5 min-w-0">
               {productStats.find(p => p.name.toLowerCase() === selectedProduct.toLowerCase())?.image && (
                 <img
                   src={productStats.find(p => p.name.toLowerCase() === selectedProduct.toLowerCase())?.image}
                   alt=""
-                  className="w-12 h-12 rounded-2xl object-cover shadow-xs border border-amber-200"
+                  className="w-14 h-14 rounded-2xl object-cover shrink-0 shadow-xs border border-amber-200/80 bg-white"
                 />
               )}
-              <div>
-                <span className="text-xs font-bold text-amber-700 uppercase tracking-wider block">Выбранный продукт</span>
-                <h4 className="text-lg font-black text-stone-900">{selectedProduct}</h4>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-amber-700 uppercase tracking-wider block">
+                  Выбранный продукт
+                </span>
+                <h4 className="text-xl font-black text-stone-900 truncate">{selectedProduct}</h4>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right shrink-0">
               <span className="text-xs text-stone-500 font-medium block">Итого потрачено</span>
-              <p className="text-xl font-black text-amber-900">
+              <p className="text-xl sm:text-2xl font-black text-amber-900">
                 {productStats.find(p => p.name.toLowerCase() === selectedProduct.toLowerCase())?.total.toLocaleString('ru-RU')} ₽
               </p>
             </div>

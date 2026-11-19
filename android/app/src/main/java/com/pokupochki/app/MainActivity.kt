@@ -1,11 +1,15 @@
 package com.pokupochki.app
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -19,6 +23,8 @@ import com.pokupochki.app.widget.DailyShoppingWidgetProvider
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+    private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
+    private val FILE_CHOOSER_REQUEST_CODE = 2001
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,10 +63,59 @@ class MainActivity : AppCompatActivity() {
                 Log.d("PokupochkiWeb", "${consoleMessage?.message()} [${consoleMessage?.sourceId()}:${consoleMessage?.lineNumber()}]")
                 return true
             }
+
+            override fun onShowFileChooser(
+                view: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                fileUploadCallback?.onReceiveValue(null)
+                fileUploadCallback = filePathCallback
+
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "image/*"
+                }
+
+                try {
+                    startActivityForResult(
+                        Intent.createChooser(intent, "Выберите фото"),
+                        FILE_CHOOSER_REQUEST_CODE
+                    )
+                } catch (e: Exception) {
+                    fileUploadCallback?.onReceiveValue(null)
+                    fileUploadCallback = null
+                    return false
+                }
+                return true
+            }
         }
 
         // Load app via secure virtual domain to support ES Modules and IndexedDB without CORS issues
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            if (fileUploadCallback != null) {
+                val results: Array<Uri>? = if (resultCode == Activity.RESULT_OK && data != null) {
+                    val clipData = data.clipData
+                    val dataString = data.dataString
+                    if (clipData != null && clipData.itemCount > 0) {
+                        Array(clipData.itemCount) { i -> clipData.getItemAt(i).uri }
+                    } else if (dataString != null) {
+                        arrayOf(Uri.parse(dataString))
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
+                fileUploadCallback?.onReceiveValue(results)
+                fileUploadCallback = null
+            }
+        }
     }
 
     override fun onBackPressed() {

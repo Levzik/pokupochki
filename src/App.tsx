@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState } from 'react';
 import { ActiveTab } from './types';
 import { usePokupochki } from './hooks/usePokupochki';
 import { Header } from './components/Header';
-import { TabSwitch, MobileBottomNav } from './components/Navigation';
+import { TabSwitch, MobileBottomSectionNav } from './components/Navigation';
 import { DailyListView } from './components/daily/DailyListView';
 import { MainPurchasesView } from './components/main/MainPurchasesView';
 import { StatsView } from './components/stats/StatsView';
@@ -112,10 +111,10 @@ export const App: React.FC = () => {
       </div>
 
       {/* Main Content Container */}
-      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 sm:pb-12">
-        {/* Minimal Bento Segmented Switch (Visible in Shopping sections) */}
+      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-28 sm:pb-12">
+        {/* Minimal Bento Segmented Switch (Visible on desktop/tablet) */}
         {isShoppingSection && (
-          <div className="flex justify-center mb-6">
+          <div className="hidden sm:flex justify-center mb-6">
             <TabSwitch
               currentSection={activeTab as 'main' | 'daily'}
               onChange={(section) => setActiveTab(section)}
@@ -165,22 +164,25 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* 
-        Mobile Floating Action Button ("+")
-        Styled in pastel pink/yellow as in the reference screens 
-      */}
+      {/* Mobile Bottom Navigation: Floating Capsule Switcher between "Главные" and "Каждоднев" */}
       {isShoppingSection && (
-        <button
-          onClick={handleFloatingPlusClick}
-          aria-label="Добавить"
-          className="sm:hidden fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-[#F8B4C0] hover:bg-[#F59BB0] active:scale-95 text-stone-900 flex items-center justify-center shadow-lg transition-transform duration-150"
-        >
-          <Plus className="w-7 h-7 stroke-[2.5]" />
-        </button>
+        <MobileBottomSectionNav
+          currentSection={activeTab as 'main' | 'daily'}
+          onChange={(section) => setActiveTab(section)}
+        />
       )}
 
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* When in Stats or Settings on mobile, provide quick return to purchases */}
+      {!isShoppingSection && (
+        <div className="sm:hidden fixed bottom-4 inset-x-4 z-40 flex justify-center pointer-events-none">
+          <button
+            onClick={() => setActiveTab('daily')}
+            className="pointer-events-auto px-5 py-2.5 rounded-full bg-stone-900 text-white font-bold text-xs shadow-xl active:scale-95 transition-all"
+          >
+            ← Вернуться к покупкам
+          </button>
+        </div>
+      )}
 
       {/* Android Widget Modal */}
       <AndroidWidgetModal

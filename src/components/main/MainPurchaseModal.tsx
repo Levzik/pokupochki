@@ -130,14 +130,24 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
         className="bg-white rounded-[32px] w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl border border-stone-100 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Full-Bleed Airy Hero Image (Edge-to-edge covering top) */}
-        <div className="relative w-full h-56 sm:h-64 bg-stone-100 shrink-0 overflow-hidden">
+        {/* Full-Bleed Airy Hero Image with Ambient Glow (Shows 100% of photo content) */}
+        <div className="relative w-full h-60 sm:h-72 bg-stone-900/5 shrink-0 overflow-hidden flex items-center justify-center">
           {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={title}
-              className="w-full h-full object-cover transition-transform duration-300"
-            />
+            <>
+              {/* Soft ambient blurred backdrop */}
+              <img
+                src={imageUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-40 pointer-events-none"
+              />
+              {/* Full unclipped photo */}
+              <img
+                src={imageUrl}
+                alt={title}
+                className="relative z-[1] w-full h-full object-contain p-2 drop-shadow-sm transition-transform duration-300"
+              />
+            </>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-2 bg-gradient-to-b from-[#FAF8F5] to-stone-100">
               <div className="w-16 h-16 rounded-3xl bg-white/80 shadow-sm flex items-center justify-center text-stone-300">
