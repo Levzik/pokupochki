@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T17:42:11.309Z",
+  "exportedAt": "2026-11-19T17:43:40.159Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -43,9 +43,11 @@
       "id": "d_1795098386690_tvi5v",
       "title": "ПРЯНИКИ",
       "price": 300,
+      "imageUrl": "./products/pryaniki.jpg",
+      "category": "Сладости и десерты",
       "completed": false,
       "createdAt": "2026-11-19T14:26:26.690Z",
-      "updatedAt": "2026-11-19T14:26:41.410Z"
+      "updatedAt": "2026-11-19T17:42:26.759Z"
     },
     {
       "id": "d_1795104338060_o5vti",
@@ -197,7 +199,8 @@
       "note": "4K IPS 27 дюймов для работы",
       "completed": false,
       "createdAt": "2026-11-13T18:53:26.601Z",
-      "updatedAt": "2026-11-19T16:19:32.993Z"
+      "updatedAt": "2026-11-19T16:19:32.993Z",
+      "order": 4
     },
     {
       "id": "m-2",
@@ -210,7 +213,8 @@
       "note": "Беспроводные с шумоподавлением",
       "completed": false,
       "createdAt": "2026-11-15T18:53:26.601Z",
-      "updatedAt": "2026-11-19T14:40:24.749Z"
+      "updatedAt": "2026-11-19T14:40:24.749Z",
+      "order": 3
     },
     {
       "id": "m-3",
@@ -223,7 +227,8 @@
       "note": "Электрогитара типа Stratocaster",
       "completed": false,
       "createdAt": "2026-11-17T18:53:26.601Z",
-      "updatedAt": "2026-11-17T18:53:26.601Z"
+      "updatedAt": "2026-11-17T18:53:26.601Z",
+      "order": 0
     },
     {
       "id": "m_1795104357902_8sqew",
@@ -234,7 +239,8 @@
       "savedAmount": 0,
       "completed": false,
       "createdAt": "2026-11-19T16:05:57.902Z",
-      "updatedAt": "2026-11-19T16:05:57.902Z"
+      "updatedAt": "2026-11-19T16:05:57.902Z",
+      "order": 1
     },
     {
       "id": "m_1795092113267_5bray",
@@ -245,8 +251,9 @@
       "savedAmount": 0,
       "completed": false,
       "createdAt": "2026-11-19T12:41:53.267Z",
-      "updatedAt": "2026-11-19T16:05:09.974Z"
+      "updatedAt": "2026-11-19T16:05:09.974Z",
+      "order": 2
     }
   ],
-  "lastModified": "2026-11-19T17:42:11.309Z"
+  "lastModified": "2026-11-19T17:43:40.159Z"
 }
