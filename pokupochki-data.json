@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-19T16:13:59.789Z",
+  "exportedAt": "2026-11-19T16:15:22.649Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -68,6 +68,31 @@
       "completed": false,
       "createdAt": "2026-11-19T16:13:02.488Z",
       "updatedAt": "2026-11-19T16:13:35.284Z"
+    },
+    {
+      "id": "d_1795104853524_gmawu",
+      "title": "Колбаса",
+      "completed": false,
+      "createdAt": "2026-11-19T16:14:13.524Z",
+      "updatedAt": "2026-11-19T16:14:13.524Z"
+    },
+    {
+      "id": "d_1795104863565_pkenv",
+      "title": "Мясо",
+      "imageUrl": "./products/meat.jpg",
+      "category": "Мясо, птица и рыба",
+      "completed": false,
+      "createdAt": "2026-11-19T16:14:23.565Z",
+      "updatedAt": "2026-11-19T16:14:23.565Z"
+    },
+    {
+      "id": "d_1795104868910_6jh4r",
+      "title": "Фарш",
+      "imageUrl": "./products/minced_meat.jpg",
+      "category": "Мясо, птица и рыба",
+      "completed": false,
+      "createdAt": "2026-11-19T16:14:28.910Z",
+      "updatedAt": "2026-11-19T16:14:35.952Z"
     }
   ],
   "mainPurchases": [
@@ -133,5 +158,5 @@
       "updatedAt": "2026-11-19T16:05:09.974Z"
     }
   ],
-  "lastModified": "2026-11-19T16:13:59.789Z"
+  "lastModified": "2026-11-19T16:15:22.649Z"
 }
