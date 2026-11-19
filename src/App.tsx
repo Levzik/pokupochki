@@ -42,10 +42,12 @@ export const App: React.FC = () => {
     updateDailyItem,
     deleteDailyItem,
     clearCompletedDaily,
+    reorderDailyItems,
     addMainPurchase,
     updateMainPurchase,
     toggleCompleteMainPurchase,
     deleteMainPurchase,
+    reorderMainPurchases,
     updateSettings,
     triggerSync,
     reloadFromDB,
@@ -84,8 +86,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex flex-col selection:bg-amber-200 relative overflow-x-hidden">
-      {/* Background Decorative Ambient Pastel Circles (Strictly behind content with -z-10) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none">
+      {/* Background Decorative Ambient Pastel Circles (Matching reference mockups, visible at z-0) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
         {/* Soft corner pastel shapes exactly like references */}
         <div className="absolute -top-10 -left-14 w-52 h-52 sm:w-64 sm:h-64 rounded-full bg-[#FED766]/35" />
         <div className="absolute top-28 -right-16 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-[#F8B4C0]/30" />
@@ -97,8 +99,8 @@ export const App: React.FC = () => {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-rose-100/30 rounded-full blur-3xl opacity-60" />
       </div>
 
-      {/* Top Header */}
-      <div className="relative z-10">
+      {/* Top Header elevated to z-20 */}
+      <div className="relative z-20">
         <Header
           settings={settings}
           activeTab={activeTab}
@@ -115,8 +117,8 @@ export const App: React.FC = () => {
         />
       </div>
 
-      {/* Main Content Container */}
-      <main className="relative z-1 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-32 sm:pb-12">
+      {/* Main Content Container elevated to z-10 so all cards and text sit firmly above the background */}
+      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-32 sm:pb-12">
         {/* Minimal Bento Segmented Switch (Visible on desktop/tablet) */}
         {isShoppingSection && (
           <div className="hidden sm:flex justify-center mb-6">
@@ -137,6 +139,7 @@ export const App: React.FC = () => {
             onDelete={deleteDailyItem}
             onClearCompleted={clearCompletedDaily}
             onModalStateChange={setIsDailyHistoryOpen}
+            onReorder={reorderDailyItems}
           />
         )}
 
@@ -150,6 +153,7 @@ export const App: React.FC = () => {
             isAddModalOpen={isMainAddModalOpen}
             setIsAddModalOpen={setIsMainAddModalOpen}
             onModalStateChange={setIsCardModalOpen}
+            onReorder={reorderMainPurchases}
           />
         )}
 

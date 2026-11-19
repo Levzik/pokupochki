@@ -82,6 +82,17 @@ const INITIAL_MAIN: MainPurchase[] = [
 
 const DEFAULT_SYNC_REPO = 'Levzik/pokupochki';
 
+const sortByOrder = <T extends { order?: number; createdAt?: string }>(items: T[]): T[] => {
+  return [...items].sort((a, b) => {
+    if (a.order !== undefined && b.order !== undefined) {
+      return a.order - b.order;
+    }
+    if (a.order !== undefined) return -1;
+    if (b.order !== undefined) return 1;
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+  });
+};
+
 export function usePokupochki() {
   const [dailyItems, setDailyItems] = useState<DailyItem[]>([]);
   const [mainPurchases, setMainPurchases] = useState<MainPurchase[]>([]);
@@ -143,8 +154,8 @@ export function usePokupochki() {
       if (result.success) {
         const updatedDaily = await db.getAllDailyItems();
         const updatedMain = await db.getAllMainPurchases();
-        setDailyItems(updatedDaily);
-        setMainPurchases(updatedMain);
+        setDailyItems(sortByOrder(updatedDaily));
+        setMainPurchases(sortByOrder(updatedMain));
         syncToAndroidBridge(updatedDaily);
       }
 
@@ -256,8 +267,8 @@ export function usePokupochki() {
         }
       }
 
-      setDailyItems(daily);
-      setMainPurchases(main);
+      setDailyItems(sortByOrder(daily));
+      setMainPurchases(sortByOrder(main));
       setSettings(loadedSettings);
       settingsRef.current = loadedSettings;
       syncToAndroidBridge(daily);
@@ -466,6 +477,21 @@ export function usePokupochki() {
     scheduleSync();
   }, [scheduleSync]);
 
+  const reorderDailyItems = useCallback(async (newItems: DailyItem[]) => {
+    const ordered = newItems.map((item, idx) => ({ ...item, order: idx }));
+    setDailyItems(ordered);
+    syncToAndroidBridge(ordered);
+    await db.setAllDailyItems(ordered);
+    scheduleSync();
+  }, [scheduleSync]);
+
+  const reorderMainPurchases = useCallback(async (newPurchases: MainPurchase[]) => {
+    const ordered = newPurchases.map((item, idx) => ({ ...item, order: idx }));
+    setMainPurchases(ordered);
+    await db.setAllMainPurchases(ordered);
+    scheduleSync();
+  }, [scheduleSync]);
+
   // Listen for online / offline events
   useEffect(() => {
     const handleOnline = () => {
@@ -498,11 +524,13 @@ export function usePokupochki() {
     updateDailyItem,
     deleteDailyItem,
     clearCompletedDaily,
+    reorderDailyItems,
     // Main actions
     addMainPurchase,
     updateMainPurchase,
     toggleCompleteMainPurchase,
     deleteMainPurchase,
+    reorderMainPurchases,
     // Settings & Sync actions
     updateSettings,
     triggerSync,

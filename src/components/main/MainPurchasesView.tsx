@@ -4,6 +4,7 @@ import { MainPurchase } from '../../types';
 import { MainPurchaseCard } from './MainPurchaseCard';
 import { MainPurchaseModal } from './MainPurchaseModal';
 import { MainPurchaseAddModal } from './MainPurchaseAddModal';
+import { useDragReorder } from '../../hooks/useDragReorder';
 
 interface MainPurchasesViewProps {
   purchases: MainPurchase[];
@@ -14,6 +15,7 @@ interface MainPurchasesViewProps {
   isAddModalOpen: boolean;
   setIsAddModalOpen: (open: boolean) => void;
   onModalStateChange?: (isOpen: boolean) => void;
+  onReorder?: (newPurchases: MainPurchase[]) => void;
 }
 
 export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
@@ -25,12 +27,25 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
   isAddModalOpen,
   setIsAddModalOpen,
   onModalStateChange,
+  onReorder,
 }) => {
   const [selectedPurchase, setSelectedPurchase] = useState<MainPurchase | null>(null);
 
   useEffect(() => {
     onModalStateChange?.(Boolean(selectedPurchase));
   }, [selectedPurchase, onModalStateChange]);
+
+  const {
+    draggedIndex,
+    dragOverIndex,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleDragEnd,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useDragReorder(purchases, (newOrder) => onReorder?.(newOrder));
 
   // Stats summary for header pill
   const totalGoal = purchases.reduce((sum, p) => sum + (p.price || 0), 0);
@@ -80,15 +95,32 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {purchases.map((purchase, idx) => (
-            <MainPurchaseCard
+            <div
               key={purchase.id}
-              purchase={purchase}
-              index={idx}
-              onClick={() => setSelectedPurchase(purchase)}
-              onEdit={() => setSelectedPurchase(purchase)}
-              onDelete={() => onDelete(purchase.id)}
-              onToggleComplete={() => onToggleComplete(purchase.id)}
-            />
+              data-drag-index={idx}
+              draggable={true}
+              onDragStart={(e) => handleDragStart(idx, e)}
+              onDragOver={(e) => handleDragOver(idx, e)}
+              onDrop={(e) => handleDrop(idx, e)}
+              onDragEnd={handleDragEnd}
+              className={`transition-all duration-200 select-none ${
+                draggedIndex === idx ? 'opacity-40 scale-95' : ''
+              } ${
+                dragOverIndex === idx && draggedIndex !== idx ? 'ring-4 ring-amber-300 ring-offset-4 scale-[1.02] rounded-[30px]' : ''
+              }`}
+            >
+              <MainPurchaseCard
+                purchase={purchase}
+                index={idx}
+                onClick={() => setSelectedPurchase(purchase)}
+                onEdit={() => setSelectedPurchase(purchase)}
+                onDelete={() => onDelete(purchase.id)}
+                onToggleComplete={() => onToggleComplete(purchase.id)}
+                onTouchDragStart={() => handleTouchStart(idx)}
+                onTouchDragMove={handleTouchMove}
+                onTouchDragEnd={handleTouchEnd}
+              />
+            </div>
           ))}
 
           {/* Minimal Bento Quick Add Card (Matching референс 1.png) */}

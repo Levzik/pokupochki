@@ -10,6 +10,7 @@ export interface DailyItem {
   completedAt?: string;
   createdAt: string;
   updatedAt: string;
+  order?: number;
 }
 
 export type CardColorTheme = 'peach' | 'pink' | 'mint' | 'lavender' | 'vanilla' | 'sky';
@@ -32,6 +33,7 @@ export interface MainPurchase {
   completedAt?: string;
   createdAt: string;
   updatedAt: string;
+  order?: number;
 }
 
 export interface SyncSettings {

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, Trash2, Edit2, X } from 'lucide-react';
+import { Check, Trash2, Edit2, X, GripVertical } from 'lucide-react';
 import { DailyItem } from '../../types';
 import { matchProduct } from '../../data/productCatalog';
 
@@ -8,6 +8,9 @@ interface DailyItemRowProps {
   onToggle: (id: string) => void;
   onUpdate: (id: string, updates: Partial<DailyItem>) => void;
   onDelete: (id: string) => void;
+  onTouchDragStart?: (e: React.TouchEvent) => void;
+  onTouchDragMove?: (e: React.TouchEvent) => void;
+  onTouchDragEnd?: (e: React.TouchEvent) => void;
 }
 
 export const DailyItemRow: React.FC<DailyItemRowProps> = ({
@@ -15,6 +18,9 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
   onToggle,
   onUpdate,
   onDelete,
+  onTouchDragStart,
+  onTouchDragMove,
+  onTouchDragEnd,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(item.title);
@@ -111,9 +117,22 @@ export const DailyItemRow: React.FC<DailyItemRowProps> = ({
   const productImage = item.imageUrl || matchProduct(item.title)?.image;
 
   return (
-    <div className="group flex items-center justify-between py-2.5 sm:py-3 border-b border-stone-100 last:border-b-0 transition-colors hover:bg-stone-50/60 rounded-xl px-2">
-      {/* Checkbox, Thumbnail and Title */}
-      <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 pr-2">
+    <div className="group flex items-center justify-between py-2.5 sm:py-3 border-b border-stone-100 last:border-b-0 transition-colors hover:bg-stone-50/60 rounded-xl px-1 sm:px-2">
+      {/* Checkbox, Thumbnail, Title and Drag Handle */}
+      <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0 pr-2">
+        {/* Drag handle */}
+        {!item.completed && (
+          <div
+            onTouchStart={onTouchDragStart}
+            onTouchMove={onTouchDragMove}
+            onTouchEnd={onTouchDragEnd}
+            className="p-1 -ml-1 text-stone-300 hover:text-stone-600 active:text-amber-500 cursor-grab active:cursor-grabbing touch-none select-none transition-colors shrink-0"
+            title="Перетащить в очереди"
+          >
+            <GripVertical className="w-4 h-4" />
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => onToggle(item.id)}

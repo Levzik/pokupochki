@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MoreHorizontal, ExternalLink, Image as ImageIcon, Check } from 'lucide-react';
+import { MoreHorizontal, ExternalLink, Image as ImageIcon, Check, GripVertical } from 'lucide-react';
 import { MainPurchase } from '../../types';
 import { getCardTheme } from '../../utils/cardThemes';
 
@@ -10,6 +10,9 @@ interface MainPurchaseCardProps {
   onEdit: () => void;
   onDelete: () => void;
   onToggleComplete?: () => void;
+  onTouchDragStart?: (e: React.TouchEvent) => void;
+  onTouchDragMove?: (e: React.TouchEvent) => void;
+  onTouchDragEnd?: (e: React.TouchEvent) => void;
 }
 
 export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
@@ -19,6 +22,9 @@ export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
   onEdit,
   onDelete,
   onToggleComplete,
+  onTouchDragStart,
+  onTouchDragMove,
+  onTouchDragEnd,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   // Color is automatically assigned from the pastel palette!
@@ -56,6 +62,21 @@ export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
 
         {/* Subtle gradient scrim at the top for badge/button contrast */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent pointer-events-none" />
+
+        {/* Drag handle button (grab with mouse or swipe with finger) */}
+        <div
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            onTouchDragStart?.(e);
+          }}
+          onTouchMove={onTouchDragMove}
+          onTouchEnd={onTouchDragEnd}
+          className="absolute top-3 left-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-700 flex items-center justify-center transition-all shadow-md backdrop-blur-md cursor-grab active:cursor-grabbing touch-none select-none active:scale-95"
+          title="Перетащить карточку"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="w-4 h-4 text-stone-600" />
+        </div>
 
         {/* 3-dots Quick Menu Button */}
         <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>

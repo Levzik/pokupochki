@@ -4,6 +4,7 @@ import { DailyItem } from '../../types';
 import { DailyItemRow } from './DailyItemRow';
 import { DailyQuickAdd } from './DailyQuickAdd';
 import { DailyHistoryModal } from './DailyHistoryModal';
+import { useDragReorder } from '../../hooks/useDragReorder';
 
 interface DailyListViewProps {
   items: DailyItem[];
@@ -13,6 +14,7 @@ interface DailyListViewProps {
   onDelete: (id: string) => void;
   onClearCompleted: () => void;
   onModalStateChange?: (isOpen: boolean) => void;
+  onReorder?: (newItems: DailyItem[]) => void;
 }
 
 interface UndoToastState {
@@ -28,6 +30,7 @@ export const DailyListView: React.FC<DailyListViewProps> = ({
   onDelete,
   onClearCompleted,
   onModalStateChange,
+  onReorder,
 }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [undoToast, setUndoToast] = useState<UndoToastState | null>(null);
@@ -45,6 +48,24 @@ export const DailyListView: React.FC<DailyListViewProps> = ({
     () => activeItems.reduce((acc, item) => acc + (item.price || 0), 0),
     [activeItems]
   );
+
+  const handleReorderActive = (newActive: DailyItem[]) => {
+    if (!onReorder) return;
+    const completed = items.filter(i => i.completed);
+    onReorder([...newActive, ...completed]);
+  };
+
+  const {
+    draggedIndex,
+    dragOverIndex,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleDragEnd,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = useDragReorder(activeItems, handleReorderActive);
 
   const handleToggle = (id: string) => {
     const item = items.find((i) => i.id === id);
@@ -112,14 +133,31 @@ export const DailyListView: React.FC<DailyListViewProps> = ({
               <p className="text-xs text-stone-400 mt-1">Добавьте нужные товары в поле ниже</p>
             </div>
           ) : (
-            activeItems.map((item) => (
-              <DailyItemRow
+            activeItems.map((item, idx) => (
+              <div
                 key={item.id}
-                item={item}
-                onToggle={handleToggle}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-              />
+                data-drag-index={idx}
+                draggable={true}
+                onDragStart={(e) => handleDragStart(idx, e)}
+                onDragOver={(e) => handleDragOver(idx, e)}
+                onDrop={(e) => handleDrop(idx, e)}
+                onDragEnd={handleDragEnd}
+                className={`transition-all duration-150 ${
+                  draggedIndex === idx ? 'opacity-40 bg-amber-50/60 rounded-xl' : ''
+                } ${
+                  dragOverIndex === idx && draggedIndex !== idx ? 'border-t-2 border-amber-400 -mt-[2px]' : ''
+                }`}
+              >
+                <DailyItemRow
+                  item={item}
+                  onToggle={handleToggle}
+                  onUpdate={onUpdate}
+                  onDelete={onDelete}
+                  onTouchDragStart={() => handleTouchStart(idx)}
+                  onTouchDragMove={handleTouchMove}
+                  onTouchDragEnd={handleTouchEnd}
+                />
+              </div>
             ))
           )}
         </div>
