@@ -25,17 +25,6 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
   const [showUrlInput, setShowUrlInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [isOpen]);
-
   // Support Ctrl+V paste of screenshot anywhere in add modal
   useEffect(() => {
     const handlePaste = async (e: ClipboardEvent) => {

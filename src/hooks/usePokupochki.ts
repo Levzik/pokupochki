@@ -94,6 +94,15 @@ export function usePokupochki() {
     syncStatus: 'idle',
   });
   const [isLoading, setIsLoading] = useState(true);
+
+  // Mutable refs to prevent infinite render loops and throttle sync requests
+  const settingsRef = useRef(settings);
+  useEffect(() => {
+    settingsRef.current = settings;
+  }, [settings]);
+
+  const isSyncingRef = useRef(false);
+  const lastSyncTimestampRef = useRef(0);
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Helper to notify native Android widget bridge if running inside native Android App
@@ -106,6 +115,80 @@ export function usePokupochki() {
       }
     }
   };
+
+  // Manual or Automated Trigger Sync with Mutex Lock and Rate Throttle
+  const triggerSync = useCallback(async (force = false) => {
+    const current = settingsRef.current;
+    if (!current.githubToken || !current.githubRepo) {
+      return { success: false, message: 'Синхронизация не настроена' };
+    }
+
+    if (isSyncingRef.current) {
+      return { success: false, message: 'Синхронизация уже выполняется...' };
+    }
+
+    const now = Date.now();
+    // Throttle automatic requests to minimum 10s between network hits, unless force=true
+    if (!force && now - lastSyncTimestampRef.current < 10000) {
+      return { success: true, message: 'Данные актуальны' };
+    }
+
+    isSyncingRef.current = true;
+    lastSyncTimestampRef.current = now;
+
+    setSettings(prev => ({ ...prev, syncStatus: 'syncing', lastError: undefined }));
+
+    try {
+      const result = await githubSync.sync(current);
+      if (result.success) {
+        const updatedDaily = await db.getAllDailyItems();
+        const updatedMain = await db.getAllMainPurchases();
+        setDailyItems(updatedDaily);
+        setMainPurchases(updatedMain);
+        syncToAndroidBridge(updatedDaily);
+      }
+
+      setSettings(prev => {
+        const next: SyncSettings = {
+          ...prev,
+          syncStatus: result.success ? 'synced' : (navigator.onLine ? 'error' : 'offline'),
+          lastSyncTime: result.lastSyncTime || prev.lastSyncTime,
+          lastError: result.error
+        };
+        db.saveSettings(next);
+        return next;
+      });
+      return result;
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setSettings(prev => {
+        const next: SyncSettings = {
+          ...prev,
+          syncStatus: 'error',
+          lastError: errorMsg
+        };
+        db.saveSettings(next);
+        return next;
+      });
+      return { success: false, message: 'Ошибка сети', error: errorMsg };
+    } finally {
+      isSyncingRef.current = false;
+    }
+  }, []);
+
+  // Schedule auto sync debounced (2.5 seconds after user stops editing)
+  const scheduleSync = useCallback(() => {
+    const current = settingsRef.current;
+    if (!current.autoSync || !current.githubToken || !current.githubRepo) {
+      return;
+    }
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+    syncTimeoutRef.current = setTimeout(() => {
+      triggerSync(false);
+    }, 2500);
+  }, [triggerSync]);
 
   // Load from IndexedDB on startup
   const loadData = useCallback(async () => {
@@ -176,120 +259,53 @@ export function usePokupochki() {
       setDailyItems(daily);
       setMainPurchases(main);
       setSettings(loadedSettings);
+      settingsRef.current = loadedSettings;
       syncToAndroidBridge(daily);
 
       // Automatic background sync on app launch if configured
       if (loadedSettings.autoSync && loadedSettings.githubToken && loadedSettings.githubRepo && navigator.onLine) {
-        githubSync.sync(loadedSettings).then(async (res) => {
-          if (res.success) {
-            const freshDaily = await db.getAllDailyItems();
-            const freshMain = await db.getAllMainPurchases();
-            setDailyItems(freshDaily);
-            setMainPurchases(freshMain);
-            syncToAndroidBridge(freshDaily);
-            setSettings(prev => ({
-              ...prev,
-              syncStatus: 'synced',
-              lastSyncTime: res.lastSyncTime || new Date().toISOString()
-            }));
-          }
-        }).catch(e => console.warn('Boot sync error:', e));
+        setTimeout(() => {
+          triggerSync(false);
+        }, 1000);
       }
     } catch (err) {
       console.error('Failed to load from IndexedDB:', err);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [triggerSync]);
 
-  // Schedule auto sync debounced
-  const scheduleSync = useCallback((currentSettings: SyncSettings) => {
-    if (!currentSettings.autoSync || !currentSettings.githubToken || !currentSettings.githubRepo) {
-      return;
-    }
-    if (syncTimeoutRef.current) {
-      clearTimeout(syncTimeoutRef.current);
-    }
-    syncTimeoutRef.current = setTimeout(async () => {
-      setSettings(prev => ({ ...prev, syncStatus: 'syncing' }));
-      const result = await githubSync.sync(currentSettings);
-      if (result.success) {
-        const updatedDaily = await db.getAllDailyItems();
-        const updatedMain = await db.getAllMainPurchases();
-        setDailyItems(updatedDaily);
-        setMainPurchases(updatedMain);
-        syncToAndroidBridge(updatedDaily);
-      }
-      setSettings(prev => {
-        const next: SyncSettings = {
-          ...prev,
-          syncStatus: result.success ? 'synced' : (navigator.onLine ? 'error' : 'offline'),
-          lastSyncTime: result.lastSyncTime || prev.lastSyncTime,
-          lastError: result.error
-        };
-        db.saveSettings(next);
-        return next;
-      });
-    }, 1500);
-  }, []);
-
-  // Manual Trigger Sync
-  const triggerSync = useCallback(async () => {
-    if (!settings.githubToken || !settings.githubRepo) {
-      return { success: false, message: 'Синхронизация не настроена' };
-    }
-    setSettings(prev => ({ ...prev, syncStatus: 'syncing', lastError: undefined }));
-    const result = await githubSync.sync(settings);
-    // Reload local DB after sync to pick up remote merges
-    if (result.success) {
-      const updatedDaily = await db.getAllDailyItems();
-      const updatedMain = await db.getAllMainPurchases();
-      setDailyItems(updatedDaily);
-      setMainPurchases(updatedMain);
-      syncToAndroidBridge(updatedDaily);
-    }
-
-    setSettings(prev => {
-      const next: SyncSettings = {
-        ...prev,
-        syncStatus: result.success ? 'synced' : (navigator.onLine ? 'error' : 'offline'),
-        lastSyncTime: result.lastSyncTime || prev.lastSyncTime,
-        lastError: result.error
-      };
-      db.saveSettings(next);
-      return next;
-    });
-    return result;
-  }, [settings]);
-
+  // Mount effect: load local data once
   useEffect(() => {
     loadData();
+  }, [loadData]);
 
+  // Periodic automatic background sync (every 30s) and on tab visibility restore
+  useEffect(() => {
     const handleVisibility = () => {
-      if (!document.hidden) {
-        loadData();
-        if (settings.autoSync && settings.githubToken && settings.githubRepo && navigator.onLine) {
-          triggerSync();
+      if (!document.hidden && navigator.onLine && settingsRef.current.autoSync) {
+        const elapsed = Date.now() - lastSyncTimestampRef.current;
+        if (elapsed >= 20000) {
+          triggerSync(false);
         }
       }
     };
     document.addEventListener('visibilitychange', handleVisibility);
 
-    // Periodic automatic background sync every 15 seconds when window is active
-    let interval: NodeJS.Timeout | null = null;
-    if (settings.autoSync && settings.githubToken && settings.githubRepo) {
-      interval = setInterval(() => {
-        if (!document.hidden && navigator.onLine) {
-          triggerSync();
+    const interval = setInterval(() => {
+      if (!document.hidden && navigator.onLine && settingsRef.current.autoSync) {
+        const elapsed = Date.now() - lastSyncTimestampRef.current;
+        if (elapsed >= 25000) {
+          triggerSync(false);
         }
-      }, 15000);
-    }
+      }
+    }, 30000);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility);
-      if (interval) clearInterval(interval);
+      clearInterval(interval);
     };
-  }, [loadData, settings.autoSync, settings.githubToken, settings.githubRepo, triggerSync]);
+  }, [triggerSync]);
 
   // Save Settings
   const updateSettings = useCallback(async (newSettings: Partial<SyncSettings>) => {
@@ -320,8 +336,8 @@ export function usePokupochki() {
       return next;
     });
     await db.saveDailyItem(newItem);
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const toggleDailyItem = useCallback(async (id: string) => {
     const now = new Date().toISOString();
@@ -342,8 +358,8 @@ export function usePokupochki() {
       syncToAndroidBridge(next);
       return next;
     });
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const updateDailyItem = useCallback(async (id: string, updates: Partial<DailyItem>) => {
     const now = new Date().toISOString();
@@ -367,8 +383,8 @@ export function usePokupochki() {
       syncToAndroidBridge(next);
       return next;
     });
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const deleteDailyItem = useCallback(async (id: string) => {
     setDailyItems(prev => {
@@ -377,8 +393,8 @@ export function usePokupochki() {
       return next;
     });
     await db.deleteDailyItem(id);
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const clearCompletedDaily = useCallback(async () => {
     const active = dailyItems.filter(item => !item.completed);
@@ -388,8 +404,8 @@ export function usePokupochki() {
     for (const id of completedIds) {
       await db.deleteDailyItem(id);
     }
-    scheduleSync(settings);
-  }, [dailyItems, settings, scheduleSync]);
+    scheduleSync();
+  }, [dailyItems, scheduleSync]);
 
   // --- Main Purchases Actions ---
   const addMainPurchase = useCallback(async (purchase: Omit<MainPurchase, 'id' | 'createdAt' | 'updatedAt' | 'completed'>) => {
@@ -404,9 +420,9 @@ export function usePokupochki() {
 
     setMainPurchases(prev => [newItem, ...prev]);
     await db.saveMainPurchase(newItem);
-    scheduleSync(settings);
+    scheduleSync();
     return newItem;
-  }, [settings, scheduleSync]);
+  }, [scheduleSync]);
 
   const updateMainPurchase = useCallback(async (id: string, updates: Partial<MainPurchase>) => {
     const now = new Date().toISOString();
@@ -422,8 +438,8 @@ export function usePokupochki() {
       }
       return item;
     }));
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const toggleCompleteMainPurchase = useCallback(async (id: string) => {
     const now = new Date().toISOString();
@@ -441,21 +457,21 @@ export function usePokupochki() {
       }
       return item;
     }));
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   const deleteMainPurchase = useCallback(async (id: string) => {
     setMainPurchases(prev => prev.filter(item => item.id !== id));
     await db.deleteMainPurchase(id);
-    scheduleSync(settings);
-  }, [settings, scheduleSync]);
+    scheduleSync();
+  }, [scheduleSync]);
 
   // Listen for online / offline events
   useEffect(() => {
     const handleOnline = () => {
       setSettings(prev => ({ ...prev, syncStatus: 'idle' }));
-      if (settings.autoSync) {
-        triggerSync();
+      if (settingsRef.current.autoSync) {
+        triggerSync(false);
       }
     };
     const handleOffline = () => {
@@ -469,7 +485,7 @@ export function usePokupochki() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [settings.autoSync, triggerSync]);
+  }, [triggerSync]);
 
   return {
     dailyItems,

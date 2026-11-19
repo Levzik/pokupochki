@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Sparkles, ShoppingBag } from 'lucide-react';
 import { MainPurchase } from '../../types';
 import { MainPurchaseCard } from './MainPurchaseCard';
@@ -13,6 +13,7 @@ interface MainPurchasesViewProps {
   onToggleComplete: (id: string) => void;
   isAddModalOpen: boolean;
   setIsAddModalOpen: (open: boolean) => void;
+  onModalStateChange?: (isOpen: boolean) => void;
 }
 
 export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
@@ -23,8 +24,13 @@ export const MainPurchasesView: React.FC<MainPurchasesViewProps> = ({
   onToggleComplete,
   isAddModalOpen,
   setIsAddModalOpen,
+  onModalStateChange,
 }) => {
   const [selectedPurchase, setSelectedPurchase] = useState<MainPurchase | null>(null);
+
+  useEffect(() => {
+    onModalStateChange?.(Boolean(selectedPurchase));
+  }, [selectedPurchase, onModalStateChange]);
 
   // Stats summary for header pill
   const totalGoal = purchases.reduce((sum, p) => sum + (p.price || 0), 0);

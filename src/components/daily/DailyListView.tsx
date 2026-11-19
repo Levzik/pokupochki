@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { History, CheckCheck, X } from 'lucide-react';
 import { DailyItem } from '../../types';
 import { DailyItemRow } from './DailyItemRow';
@@ -12,6 +12,7 @@ interface DailyListViewProps {
   onUpdate: (id: string, updates: Partial<DailyItem>) => void;
   onDelete: (id: string) => void;
   onClearCompleted: () => void;
+  onModalStateChange?: (isOpen: boolean) => void;
 }
 
 interface UndoToastState {
@@ -26,10 +27,15 @@ export const DailyListView: React.FC<DailyListViewProps> = ({
   onUpdate,
   onDelete,
   onClearCompleted,
+  onModalStateChange,
 }) => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [undoToast, setUndoToast] = useState<UndoToastState | null>(null);
   const undoTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    onModalStateChange?.(isHistoryOpen);
+  }, [isHistoryOpen, onModalStateChange]);
 
   const activeItems = useMemo(() => items.filter((i) => !i.completed), [items]);
   const completedItems = useMemo(() => items.filter((i) => i.completed), [items]);

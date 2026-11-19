@@ -85,11 +85,28 @@ export class GitHubSyncService {
       } else if (getResponse.status === 404) {
         // File does not exist yet; will create fresh
         remoteData = null;
-      } else if (getResponse.status === 401 || getResponse.status === 403) {
+      } else if (getResponse.status === 403 || getResponse.status === 429) {
+        const remaining = getResponse.headers.get('x-ratelimit-remaining');
+        const resetTime = getResponse.headers.get('x-ratelimit-reset');
+        if (remaining === '0' && resetTime) {
+          const resetDate = new Date(parseInt(resetTime, 10) * 1000);
+          const timeStr = resetDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+          return {
+            success: false,
+            message: `Лимит GitHub исчерпан (сброс в ${timeStr})`,
+            error: `Превышен лимит запросов GitHub (5000/час). Лимит обновится в ${timeStr}. Локальные данные сохранены!`
+          };
+        }
+        return {
+          success: false,
+          message: 'Ошибка доступа к GitHub (403)',
+          error: `HTTP ${getResponse.status}: Недействительный токен или нет прав доступа к репозиторию`
+        };
+      } else if (getResponse.status === 401) {
         return {
           success: false,
           message: 'Ошибка авторизации GitHub (проверьте токен)',
-          error: `HTTP ${getResponse.status}: Недействительный токен или нет прав доступа к репозиторию`
+          error: `HTTP 401: Недействительный токен доступа`
         };
       } else {
         return {
@@ -133,6 +150,17 @@ export class GitHubSyncService {
       });
 
       if (!putResponse.ok) {
+        const remaining = putResponse.headers.get('x-ratelimit-remaining');
+        const resetTime = putResponse.headers.get('x-ratelimit-reset');
+        if (remaining === '0' && resetTime) {
+          const resetDate = new Date(parseInt(resetTime, 10) * 1000);
+          const timeStr = resetDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+          return {
+            success: false,
+            message: `Лимит GitHub исчерпан (сброс в ${timeStr})`,
+            error: `Лимит запросов GitHub исчерпан. Сброс в ${timeStr}. Все данные сохранены на устройстве.`
+          };
+        }
         const errJson = await putResponse.json().catch(() => ({}));
         return {
           success: false,
@@ -222,6 +250,16 @@ export class GitHubSyncService {
       }
       if (res.status === 401) {
         return { success: false, message: 'Неверный токен авторизации' };
+      }
+      if (res.status === 403 || res.status === 429) {
+        const remaining = res.headers.get('x-ratelimit-remaining');
+        const resetTime = res.headers.get('x-ratelimit-reset');
+        if (remaining === '0' && resetTime) {
+          const resetDate = new Date(parseInt(resetTime, 10) * 1000);
+          const timeStr = resetDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+          return { success: false, message: `Лимит запросов GitHub исчерпан (сброс в ${timeStr})` };
+        }
+        return { success: false, message: 'Нет прав доступа к репозиторию (403)' };
       }
       return { success: false, message: `Ошибка GitHub: HTTP ${res.status}` };
     } catch (e: unknown) {

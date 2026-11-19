@@ -37,17 +37,6 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
     setTitle(purchase.title);
     setPrice(purchase.price.toString());
     setImageUrl(purchase.imageUrl || '');

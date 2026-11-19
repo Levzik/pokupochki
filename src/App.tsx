@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { ActiveTab } from './types';
 import { usePokupochki } from './hooks/usePokupochki';
 import { Header } from './components/Header';
@@ -25,7 +26,11 @@ export const App: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<ActiveTab>(getInitialTab);
   const [isMainAddModalOpen, setIsMainAddModalOpen] = useState(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [isDailyHistoryOpen, setIsDailyHistoryOpen] = useState(false);
   const [isAndroidWidgetOpen, setIsAndroidWidgetOpen] = useState(false);
+
+  const isAnyModalOpen = isMainAddModalOpen || isCardModalOpen || isDailyHistoryOpen || isAndroidWidgetOpen;
 
   const {
     dailyItems,
@@ -79,8 +84,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex flex-col selection:bg-amber-200 relative overflow-x-hidden">
-      {/* Background Decorative Ambient Pastel Circles (Matching reference mockups) */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
+      {/* Background Decorative Ambient Pastel Circles (Strictly behind content with -z-10) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none">
         {/* Soft corner pastel shapes exactly like references */}
         <div className="absolute -top-10 -left-14 w-52 h-52 sm:w-64 sm:h-64 rounded-full bg-[#FED766]/35" />
         <div className="absolute top-28 -right-16 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-[#F8B4C0]/30" />
@@ -105,13 +110,13 @@ export const App: React.FC = () => {
               handleFloatingPlusClick();
             }
           }}
-          onSyncClick={triggerSync}
+          onSyncClick={() => triggerSync(true)}
           onOpenWidgetInfo={() => setIsAndroidWidgetOpen(true)}
         />
       </div>
 
       {/* Main Content Container */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-32 sm:pb-12">
+      <main className="relative z-1 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-32 sm:pb-12">
         {/* Minimal Bento Segmented Switch (Visible on desktop/tablet) */}
         {isShoppingSection && (
           <div className="hidden sm:flex justify-center mb-6">
@@ -131,6 +136,7 @@ export const App: React.FC = () => {
             onUpdate={updateDailyItem}
             onDelete={deleteDailyItem}
             onClearCompleted={clearCompletedDaily}
+            onModalStateChange={setIsDailyHistoryOpen}
           />
         )}
 
@@ -143,6 +149,7 @@ export const App: React.FC = () => {
             onToggleComplete={toggleCompleteMainPurchase}
             isAddModalOpen={isMainAddModalOpen}
             setIsAddModalOpen={setIsMainAddModalOpen}
+            onModalStateChange={setIsCardModalOpen}
           />
         )}
 
@@ -157,15 +164,29 @@ export const App: React.FC = () => {
           <SettingsView
             settings={settings}
             onUpdateSettings={updateSettings}
-            onTriggerSync={triggerSync}
+            onTriggerSync={() => triggerSync(true)}
             onOpenWidgetModal={() => setIsAndroidWidgetOpen(true)}
             onDataReloaded={reloadFromDB}
           />
         )}
       </main>
 
+      {/* 
+        Mobile Floating Action Button ("+")
+        Restored per user request, smoothly hidden when any modal/card is open
+      */}
+      {isShoppingSection && !isAnyModalOpen && (
+        <button
+          onClick={handleFloatingPlusClick}
+          aria-label="Добавить покупку"
+          className="sm:hidden fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-[#F8B4C0] hover:bg-[#F59BB0] active:scale-95 text-stone-900 flex items-center justify-center shadow-lg transition-transform duration-150"
+        >
+          <Plus className="w-7 h-7 stroke-[2.5]" />
+        </button>
+      )}
+
       {/* Mobile Bottom Navigation: Floating Capsule Switcher between "Главные" and "Каждоднев" */}
-      {isShoppingSection && (
+      {isShoppingSection && !isAnyModalOpen && (
         <MobileBottomSectionNav
           currentSection={activeTab as 'main' | 'daily'}
           onChange={(section) => setActiveTab(section)}
