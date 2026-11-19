@@ -80,12 +80,14 @@ const INITIAL_MAIN: MainPurchase[] = [
   }
 ];
 
+const DEFAULT_SYNC_REPO = 'Levzik/pokupochki';
+
 export function usePokupochki() {
   const [dailyItems, setDailyItems] = useState<DailyItem[]>([]);
   const [mainPurchases, setMainPurchases] = useState<MainPurchase[]>([]);
   const [settings, setSettings] = useState<SyncSettings>({
     githubToken: '',
-    githubRepo: '',
+    githubRepo: DEFAULT_SYNC_REPO,
     githubBranch: 'main',
     githubFilePath: 'pokupochki-data.json',
     autoSync: true,

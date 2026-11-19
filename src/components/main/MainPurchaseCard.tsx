@@ -34,30 +34,19 @@ export const MainPurchaseCard: React.FC<MainPurchaseCardProps> = ({
       className={`group relative ${theme.bg} rounded-[30px] shadow-soft hover:shadow-soft-hover border ${theme.border} ${theme.hoverBorder} transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden`}
     >
       {/* 
-        Full-size / Full-bleed Image with Ambient Backdrop
-        Shows 100% of the photo without clipping faces/text, framed by ambient colors
+        Full-size / Full-bleed Image (Edge-to-edge covering top of the card)
       */}
-      <div className="w-full h-52 sm:h-60 relative overflow-hidden bg-stone-900/5 flex items-center justify-center">
+      <div className="w-full h-52 sm:h-60 relative overflow-hidden bg-stone-100">
         {purchase.imageUrl ? (
-          <>
-            {/* Ambient Blurred Background filling the frame edge-to-edge */}
-            <img
-              src={purchase.imageUrl}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-40 pointer-events-none"
-            />
-            {/* Fully visible, uncropped subject */}
-            <img
-              src={purchase.imageUrl}
-              alt={purchase.title}
-              className="relative z-[1] w-full h-full object-contain p-1.5 drop-shadow-sm group-hover:scale-102 transition-transform duration-300"
-              loading="lazy"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
-          </>
+          <img
+            src={purchase.imageUrl}
+            alt={purchase.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLElement).style.display = 'none';
+            }}
+          />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-stone-300 gap-1.5 bg-gradient-to-b from-white/40 to-black/[0.02]">
             <ImageIcon className="w-12 h-12 stroke-1 text-stone-400/50" />

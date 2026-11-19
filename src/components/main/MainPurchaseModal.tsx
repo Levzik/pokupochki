@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Trash2, Check, ExternalLink, ChevronDown, ChevronUp, Image as ImageIcon, Sparkles, Camera, Clipboard, Link2 } from 'lucide-react';
 import { MainPurchase, CardColorTheme } from '../../types';
 import { CARD_THEMES } from '../../utils/cardThemes';
@@ -34,6 +35,17 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
   const [showOptionalFields, setShowOptionalFields] = useState(Boolean(purchase.note || purchase.link || purchase.category));
   const [showUrlInput, setShowUrlInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     setTitle(purchase.title);
@@ -121,33 +133,23 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-900/40 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-stone-900/50 backdrop-blur-xs animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div 
         className="bg-white rounded-[32px] w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl border border-stone-100 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Full-Bleed Airy Hero Image with Ambient Glow (Shows 100% of photo content) */}
-        <div className="relative w-full h-60 sm:h-72 bg-stone-900/5 shrink-0 overflow-hidden flex items-center justify-center">
+        {/* Full-Bleed Airy Hero Image (Edge-to-edge covering top) */}
+        <div className="relative w-full h-56 sm:h-64 bg-stone-100 shrink-0 overflow-hidden">
           {imageUrl ? (
-            <>
-              {/* Soft ambient blurred backdrop */}
-              <img
-                src={imageUrl}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-40 pointer-events-none"
-              />
-              {/* Full unclipped photo */}
-              <img
-                src={imageUrl}
-                alt={title}
-                className="relative z-[1] w-full h-full object-contain p-2 drop-shadow-sm transition-transform duration-300"
-              />
-            </>
+            <img
+              src={imageUrl}
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-300"
+            />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-2 bg-gradient-to-b from-[#FAF8F5] to-stone-100">
               <div className="w-16 h-16 rounded-3xl bg-white/80 shadow-sm flex items-center justify-center text-stone-300">
@@ -441,7 +443,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-4 bg-stone-50 border-t border-stone-100 flex items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-white border-t border-stone-100 flex items-center justify-between gap-3 shrink-0 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-xs">
           {/* Delete Button */}
           <button
             type="button"
@@ -467,6 +469,7 @@ export const MainPurchaseModal: React.FC<MainPurchaseModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

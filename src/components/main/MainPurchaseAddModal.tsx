@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Plus, Sparkles, Image as ImageIcon, Camera, Clipboard, Link2, Trash2 } from 'lucide-react';
 import { MainPurchase } from '../../types';
 import { processImageFile, readImageFromClipboard } from '../../utils/imageUtils';
@@ -23,6 +24,17 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
   const [savedAmount, setSavedAmount] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   // Support Ctrl+V paste of screenshot anywhere in add modal
   useEffect(() => {
@@ -100,31 +112,23 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-900/40 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-stone-900/50 backdrop-blur-xs animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
         className="bg-white rounded-[32px] w-full max-w-md shadow-2xl border border-stone-100 overflow-hidden flex flex-col max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Full-bleed Airy Image Hero / Preview with Ambient Backdrop */}
-        <div className="relative w-full h-52 sm:h-56 bg-stone-900/5 shrink-0 overflow-hidden flex items-center justify-center">
+        {/* Full-bleed Airy Image Hero / Preview */}
+        <div className="relative w-full h-48 sm:h-52 bg-stone-100 shrink-0 overflow-hidden">
           {imageUrl ? (
-            <>
-              <img
-                src={imageUrl}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover scale-125 blur-xl opacity-40 pointer-events-none"
-              />
-              <img
-                src={imageUrl}
-                alt=""
-                className="relative z-[1] w-full h-full object-contain p-2 drop-shadow-sm"
-              />
-            </>
+            <img
+              src={imageUrl}
+              alt=""
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-1.5 bg-gradient-to-b from-[#FAF8F5] to-stone-100">
               <div className="w-12 h-12 rounded-2xl bg-white shadow-2xs flex items-center justify-center text-stone-300">
@@ -303,7 +307,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
           </div>
 
           {/* Submit */}
-          <div className="pt-2 flex justify-end gap-2">
+          <div className="pt-2 flex justify-end gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
             <button
               type="button"
               onClick={onClose}
@@ -322,6 +326,7 @@ export const MainPurchaseAddModal: React.FC<MainPurchaseAddModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -111,7 +111,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Main Content Container */}
-      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-28 sm:pb-12">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-32 sm:pb-12">
         {/* Minimal Bento Segmented Switch (Visible on desktop/tablet) */}
         {isShoppingSection && (
           <div className="hidden sm:flex justify-center mb-6">

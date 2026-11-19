@@ -53,7 +53,7 @@ export const MobileBottomSectionNav: React.FC<{
   const isMain = currentSection === 'main';
 
   return (
-    <div className="sm:hidden fixed bottom-4 inset-x-4 z-40 flex justify-center pointer-events-none">
+    <div className="sm:hidden fixed bottom-4 inset-x-4 z-40 flex justify-center pointer-events-none [body.modal-open_&]:hidden">
       <div className="pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-full border border-stone-200/90 shadow-xl flex items-center w-full max-w-xs transition-all">
         <button
           type="button"
