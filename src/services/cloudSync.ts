@@ -1,5 +1,6 @@
 import { AppData, DailyItem, MainPurchase } from '../types';
 import { db } from './db';
+import { githubSync } from './githubSync';
 
 /**
  * Universal Peer/Room Cloud Sync
@@ -99,37 +100,7 @@ export class CloudSyncService {
   }
 
   private merge(local: AppData, remote: AppData | null): AppData {
-    if (!remote) return local;
-
-    const dailyMap = new Map<string, DailyItem>();
-    for (const item of (remote.dailyItems || [])) {
-      dailyMap.set(item.id, item);
-    }
-    for (const item of (local.dailyItems || [])) {
-      const existing = dailyMap.get(item.id);
-      if (!existing || new Date(item.updatedAt || 0).getTime() >= new Date(existing.updatedAt || 0).getTime()) {
-        dailyMap.set(item.id, item);
-      }
-    }
-
-    const mainMap = new Map<string, MainPurchase>();
-    for (const item of (remote.mainPurchases || [])) {
-      mainMap.set(item.id, item);
-    }
-    for (const item of (local.mainPurchases || [])) {
-      const existing = mainMap.get(item.id);
-      if (!existing || new Date(item.updatedAt || 0).getTime() >= new Date(existing.updatedAt || 0).getTime()) {
-        mainMap.set(item.id, item);
-      }
-    }
-
-    return {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      dailyItems: Array.from(dailyMap.values()),
-      mainPurchases: Array.from(mainMap.values()),
-      lastModified: new Date().toISOString(),
-    };
+    return githubSync.mergeSnapshots(local, remote);
   }
 }
 

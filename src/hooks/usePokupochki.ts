@@ -113,6 +113,7 @@ export function usePokupochki() {
   }, [settings]);
 
   const isSyncingRef = useRef(false);
+  const pendingSyncRef = useRef(false);
   const lastSyncTimestampRef = useRef(0);
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -127,7 +128,7 @@ export function usePokupochki() {
     }
   };
 
-  // Manual or Automated Trigger Sync with Mutex Lock and Rate Throttle
+  // Manual or Automated Trigger Sync with Mutex Lock and Queue
   const triggerSync = useCallback(async (force = false) => {
     const current = settingsRef.current;
     if (!current.githubToken || !current.githubRepo) {
@@ -135,17 +136,12 @@ export function usePokupochki() {
     }
 
     if (isSyncingRef.current) {
-      return { success: false, message: 'Синхронизация уже выполняется...' };
-    }
-
-    const now = Date.now();
-    // Throttle automatic requests to minimum 10s between network hits, unless force=true
-    if (!force && now - lastSyncTimestampRef.current < 10000) {
-      return { success: true, message: 'Данные актуальны' };
+      pendingSyncRef.current = true;
+      return { success: true, message: 'Синхронизация уже выполняется...' };
     }
 
     isSyncingRef.current = true;
-    lastSyncTimestampRef.current = now;
+    lastSyncTimestampRef.current = Date.now();
 
     setSettings(prev => ({ ...prev, syncStatus: 'syncing', lastError: undefined }));
 
@@ -162,7 +158,7 @@ export function usePokupochki() {
       setSettings(prev => {
         const next: SyncSettings = {
           ...prev,
-          syncStatus: result.success ? 'synced' : (navigator.onLine ? 'error' : 'offline'),
+          syncStatus: result.success ? 'synced' : (typeof navigator !== 'undefined' && navigator.onLine ? 'error' : 'offline'),
           lastSyncTime: result.lastSyncTime || prev.lastSyncTime,
           lastError: result.error
         };
@@ -184,10 +180,16 @@ export function usePokupochki() {
       return { success: false, message: 'Ошибка сети', error: errorMsg };
     } finally {
       isSyncingRef.current = false;
+      if (pendingSyncRef.current) {
+        pendingSyncRef.current = false;
+        setTimeout(() => {
+          triggerSync(false);
+        }, 300);
+      }
     }
   }, []);
 
-  // Schedule auto sync debounced (2.5 seconds after user stops editing)
+  // Schedule auto sync debounced (800ms after user action for near-instant responsiveness)
   const scheduleSync = useCallback(() => {
     const current = settingsRef.current;
     if (!current.autoSync || !current.githubToken || !current.githubRepo) {
@@ -198,7 +200,7 @@ export function usePokupochki() {
     }
     syncTimeoutRef.current = setTimeout(() => {
       triggerSync(false);
-    }, 2500);
+    }, 800);
   }, [triggerSync]);
 
   // Load from IndexedDB on startup
@@ -207,6 +209,8 @@ export function usePokupochki() {
       let daily = await db.getAllDailyItems();
       let main = await db.getAllMainPurchases();
       let loadedSettings = await db.getSettings();
+      const hasInitialized = await db.getHasInitialized();
+      const deletedIds = await db.getDeletedIds();
 
       // Check URL hash for pairing link (#sync=<base64-payload>)
       if (typeof window !== 'undefined' && window.location.hash.includes('sync=')) {
@@ -231,12 +235,21 @@ export function usePokupochki() {
         }
       }
 
-      // Seed initial demo data on fresh install
-      if (daily.length === 0 && main.length === 0) {
-        await db.setAllDailyItems(INITIAL_DAILY);
-        await db.setAllMainPurchases(INITIAL_MAIN);
-        daily = INITIAL_DAILY;
-        main = INITIAL_MAIN;
+      // Purge any local items that are in deletedIds
+      if (deletedIds && Object.keys(deletedIds).length > 0) {
+        daily = daily.filter(i => !deletedIds[i.id]);
+        main = main.filter(i => !deletedIds[i.id]);
+      }
+
+      // Seed initial demo data ONLY on genuine fresh first install, NEVER if user deleted items!
+      if (!hasInitialized) {
+        if (daily.length === 0 && main.length === 0) {
+          await db.setAllDailyItems(INITIAL_DAILY);
+          await db.setAllMainPurchases(INITIAL_MAIN);
+          daily = INITIAL_DAILY;
+          main = INITIAL_MAIN;
+        }
+        await db.setHasInitialized(true);
       }
 
       // Check if native Android widget bridge has items (e.g. added or deleted from home screen)
@@ -403,7 +416,10 @@ export function usePokupochki() {
       syncToAndroidBridge(next);
       return next;
     });
-    await db.deleteDailyItem(id);
+    await Promise.all([
+      db.deleteDailyItem(id),
+      db.recordDeletion(id),
+    ]);
     scheduleSync();
   }, [scheduleSync]);
 
@@ -412,9 +428,10 @@ export function usePokupochki() {
     const completedIds = dailyItems.filter(item => item.completed).map(i => i.id);
     setDailyItems(active);
     syncToAndroidBridge(active);
-    for (const id of completedIds) {
-      await db.deleteDailyItem(id);
-    }
+    await Promise.all([
+      db.setAllDailyItems(active),
+      db.recordDeletions(completedIds),
+    ]);
     scheduleSync();
   }, [dailyItems, scheduleSync]);
 
@@ -473,7 +490,10 @@ export function usePokupochki() {
 
   const deleteMainPurchase = useCallback(async (id: string) => {
     setMainPurchases(prev => prev.filter(item => item.id !== id));
-    await db.deleteMainPurchase(id);
+    await Promise.all([
+      db.deleteMainPurchase(id),
+      db.recordDeletion(id),
+    ]);
     scheduleSync();
   }, [scheduleSync]);
 

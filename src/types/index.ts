@@ -53,6 +53,7 @@ export interface AppData {
   dailyItems: DailyItem[];
   mainPurchases: MainPurchase[];
   lastModified: string;
+  deletedIds?: Record<string, string>; // item id -> deletedAt ISO string (tombstone)
 }
 
 export interface StatsPeriod {

@@ -29,7 +29,9 @@ export const SyncBadge: React.FC<SyncBadgeProps> = ({ settings, onSyncClick }) =
     bg = 'bg-amber-50 text-amber-800';
   } else if (settings.syncStatus === 'error') {
     icon = <AlertCircle className="w-4 h-4 text-rose-500" />;
-    tooltip = settings.lastError || 'Ошибка синхронизации';
+    tooltip = settings.lastError 
+      ? `${settings.lastError} (нажмите для повтора)` 
+      : 'Ошибка синхронизации (нажмите для повтора)';
     border = 'border-rose-200';
     bg = 'bg-rose-50 hover:bg-rose-100 text-rose-700';
   } else if (hasGitHub && settings.syncStatus === 'synced') {

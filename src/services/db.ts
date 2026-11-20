@@ -172,11 +172,78 @@ class PokupochkiDB {
     });
   }
 
+  // --- Deletion Tracking (Tombstones) ---
+  async getDeletedIds(): Promise<Record<string, string>> {
+    const db = await this.getDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction('settings', 'readonly');
+      const store = tx.objectStore('settings');
+      const req = store.get('deleted_ids');
+      req.onsuccess = () => {
+        resolve(req.result?.value || {});
+      };
+      req.onerror = () => resolve({});
+    });
+  }
+
+  async saveDeletedIds(map: Record<string, string>): Promise<void> {
+    const db = await this.getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('settings', 'readwrite');
+      const store = tx.objectStore('settings');
+      const req = store.put({ key: 'deleted_ids', value: map });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async recordDeletion(id: string): Promise<void> {
+    const current = await this.getDeletedIds();
+    current[id] = new Date().toISOString();
+    await this.saveDeletedIds(current);
+  }
+
+  async recordDeletions(ids: string[]): Promise<void> {
+    if (!ids || ids.length === 0) return;
+    const current = await this.getDeletedIds();
+    const now = new Date().toISOString();
+    for (const id of ids) {
+      current[id] = now;
+    }
+    await this.saveDeletedIds(current);
+  }
+
+  // --- Initialized Status ---
+  async getHasInitialized(): Promise<boolean> {
+    const db = await this.getDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction('settings', 'readonly');
+      const store = tx.objectStore('settings');
+      const req = store.get('has_initialized');
+      req.onsuccess = () => {
+        resolve(Boolean(req.result?.value));
+      };
+      req.onerror = () => resolve(false);
+    });
+  }
+
+  async setHasInitialized(val: boolean = true): Promise<void> {
+    const db = await this.getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('settings', 'readwrite');
+      const store = tx.objectStore('settings');
+      const req = store.put({ key: 'has_initialized', value: val });
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
   // --- Export Full Snapshot ---
   async exportSnapshot(): Promise<AppData> {
-    const [dailyItems, mainPurchases] = await Promise.all([
+    const [dailyItems, mainPurchases, deletedIds] = await Promise.all([
       this.getAllDailyItems(),
-      this.getAllMainPurchases()
+      this.getAllMainPurchases(),
+      this.getDeletedIds(),
     ]);
 
     return {
@@ -184,37 +251,79 @@ class PokupochkiDB {
       exportedAt: new Date().toISOString(),
       dailyItems,
       mainPurchases,
+      deletedIds,
       lastModified: new Date().toISOString()
     };
   }
 
   // --- Import Snapshot with Merging ---
   async importSnapshot(data: AppData, overwrite: boolean = false): Promise<void> {
+    // 1. Merge incoming deletedIds with local deletedIds
+    const localDeleted = await this.getDeletedIds();
+    const mergedDeleted: Record<string, string> = { ...localDeleted };
+    if (data.deletedIds) {
+      for (const [id, delTime] of Object.entries(data.deletedIds)) {
+        if (!mergedDeleted[id] || new Date(delTime).getTime() > new Date(mergedDeleted[id]).getTime()) {
+          mergedDeleted[id] = delTime;
+        }
+      }
+    }
+    await this.saveDeletedIds(mergedDeleted);
+
+    const isDeleted = (id: string, updatedAtStr?: string, createdAtStr?: string): boolean => {
+      const delStr = mergedDeleted[id];
+      if (!delStr) return false;
+      const delTime = new Date(delStr).getTime();
+      const itemTime = new Date(updatedAtStr || createdAtStr || 0).getTime();
+      return delTime >= itemTime;
+    };
+
     if (overwrite) {
+      // Filter out any items in data that are marked as deleted
+      const filteredDaily = (data.dailyItems || []).filter(
+        i => !isDeleted(i.id, i.updatedAt, i.createdAt)
+      );
+      const filteredMain = (data.mainPurchases || []).filter(
+        i => !isDeleted(i.id, i.updatedAt, i.createdAt)
+      );
       await Promise.all([
-        this.setAllDailyItems(data.dailyItems || []),
-        this.setAllMainPurchases(data.mainPurchases || [])
+        this.setAllDailyItems(filteredDaily),
+        this.setAllMainPurchases(filteredMain)
       ]);
       return;
     }
 
-    // Merge: conflict resolution based on updatedAt
+    // Merge: conflict resolution based on updatedAt and tombstones
     const currentDaily = await this.getAllDailyItems();
-    const dailyMap = new Map(currentDaily.map(i => [i.id, i]));
+    const dailyMap = new Map<string, DailyItem>();
+    for (const item of currentDaily) {
+      if (!isDeleted(item.id, item.updatedAt, item.createdAt)) {
+        dailyMap.set(item.id, item);
+      }
+    }
     for (const incoming of (data.dailyItems || [])) {
-      const existing = dailyMap.get(incoming.id);
-      if (!existing || new Date(incoming.updatedAt) > new Date(existing.updatedAt)) {
-        dailyMap.set(incoming.id, incoming);
+      if (!isDeleted(incoming.id, incoming.updatedAt, incoming.createdAt)) {
+        const existing = dailyMap.get(incoming.id);
+        if (!existing || new Date(incoming.updatedAt || incoming.createdAt || 0) > new Date(existing.updatedAt || existing.createdAt || 0)) {
+          dailyMap.set(incoming.id, incoming);
+        }
       }
     }
     await this.setAllDailyItems(Array.from(dailyMap.values()));
 
     const currentMain = await this.getAllMainPurchases();
-    const mainMap = new Map(currentMain.map(i => [i.id, i]));
+    const mainMap = new Map<string, MainPurchase>();
+    for (const item of currentMain) {
+      if (!isDeleted(item.id, item.updatedAt, item.createdAt)) {
+        mainMap.set(item.id, item);
+      }
+    }
     for (const incoming of (data.mainPurchases || [])) {
-      const existing = mainMap.get(incoming.id);
-      if (!existing || new Date(incoming.updatedAt) > new Date(existing.updatedAt)) {
-        mainMap.set(incoming.id, incoming);
+      if (!isDeleted(incoming.id, incoming.updatedAt, incoming.createdAt)) {
+        const existing = mainMap.get(incoming.id);
+        if (!existing || new Date(incoming.updatedAt || incoming.createdAt || 0) > new Date(existing.updatedAt || existing.createdAt || 0)) {
+          mainMap.set(incoming.id, incoming);
+        }
       }
     }
     await this.setAllMainPurchases(Array.from(mainMap.values()));
