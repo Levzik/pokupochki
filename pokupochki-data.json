@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-20T20:23:58.011Z",
+  "exportedAt": "2026-11-20T20:31:27.011Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -221,7 +221,7 @@
       "savedAmount": 0,
       "completed": false,
       "createdAt": "2026-11-20T17:59:55.289Z",
-      "updatedAt": "2026-11-20T20:23:57.201Z",
+      "updatedAt": "2026-11-20T20:24:00.946Z",
       "order": 0,
       "link": "https://www.ozon.ru/product/wtcx-motoshlem-tsvet-cherno-seryy-razmer-xl-983053334/?is_apparel_size_selected=true&sh=OYxjHmj2MA"
     }
@@ -235,5 +235,5 @@
     "m_1795110302802_rrfuh": "2026-11-20T19:57:02.717Z",
     "m_1795110300142_ei3uc": "2026-11-20T19:57:03.884Z"
   },
-  "lastModified": "2026-11-20T20:23:58.011Z"
+  "lastModified": "2026-11-20T20:31:27.011Z"
 }
