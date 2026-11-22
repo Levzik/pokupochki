@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-22T21:48:42.798Z",
+  "exportedAt": "2026-11-22T21:53:39.270Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -222,7 +222,7 @@
       "completed": false,
       "createdAt": "2026-11-20T17:59:55.289Z",
       "updatedAt": "2026-11-20T20:24:00.946Z",
-      "order": 0,
+      "order": 1,
       "link": "https://www.ozon.ru/product/wtcx-motoshlem-tsvet-cherno-seryy-razmer-xl-983053334/?is_apparel_size_selected=true&sh=OYxjHmj2MA"
     },
     {
@@ -251,7 +251,7 @@
       "updatedAt": "2026-11-21T18:39:16.755Z",
       "note": "Еще коврики\nhttps://www.ozon.ru/product/igrovoy-kovrik-dlya-myshki-bolshoy-toki-void-echo-gotika-anime-sigil-art-razmer-800h300x4-5516773123/?at=1gas1Nd9y4czvRjpLpsa4CtBwhLM3ZzG&is_apparel_size_selected=true&sh=OYxjHv3HMA\n\nЕще\nhttps://www.ozon.ru/product/igrovoy-kovrik-dlya-myshi-90-40-sm-berserk-berserk-gats-5164772043/?at=1gas1YcnEgs5m_B7tjHwTF7ftnilp5FB&is_apparel_size_selected=true&sh=OYxjHv3HMA\n\nЕще с жакардом\nhttps://www.ozon.ru/product/kovrik-dlya-myshki-bolshoy-kovrik-dlya-myshki-bolshoy-igrovoy-kovrik-dlya-myshki-900h400-kovrik-dlya-2517167062/?at=1gas1R7Qvs7tB1gY3TtlTLIKraYtBitR&is_apparel_size_selected=true&sh=OYxjHv3HMA",
       "link": "https://ali.click/g5g2s18",
-      "order": 1
+      "order": 3
     },
     {
       "id": "m_1795290890938_iwm6b",
@@ -263,7 +263,7 @@
       "completed": false,
       "createdAt": "2026-11-21T19:54:50.938Z",
       "updatedAt": "2026-11-21T19:54:50.938Z",
-      "order": 3
+      "order": 0
     },
     {
       "id": "m_1795383909492_wblde",
@@ -275,7 +275,8 @@
       "completed": false,
       "createdAt": "2026-11-22T21:45:09.492Z",
       "updatedAt": "2026-11-22T21:48:10.252Z",
-      "link": "https://www.ozon.ru/product/braun-elektrobritva-seriya-5-52-b1600s-muzhskaya-setochnaya-dlya-suhogo-i-vlazhnogo-britya-s-3-2388445468/?at=1hSs1Zn4pVRgROVSTofD-YLjh3hfxvnT&is_apparel_size_selected=true&sh=OYxjHhzcBA"
+      "link": "https://www.ozon.ru/product/braun-elektrobritva-seriya-5-52-b1600s-muzhskaya-setochnaya-dlya-suhogo-i-vlazhnogo-britya-s-3-2388445468/?at=1hSs1Zn4pVRgROVSTofD-YLjh3hfxvnT&is_apparel_size_selected=true&sh=OYxjHhzcBA",
+      "order": 5
     },
     {
       "id": "m_1795384059254_goz39",
@@ -287,7 +288,8 @@
       "completed": false,
       "createdAt": "2026-11-22T21:47:39.254Z",
       "updatedAt": "2026-11-22T21:47:59.741Z",
-      "link": "https://www.ozon.ru/product/dinamicheskiy-mikrofon-fifine-tank6-white-5621787206/?at=1hSs1-vIFtngi0HZ8EBHA0_5hH1RScdl&is_apparel_size_selected=true&sh=OYxjHhzcBA"
+      "link": "https://www.ozon.ru/product/dinamicheskiy-mikrofon-fifine-tank6-white-5621787206/?at=1hSs1-vIFtngi0HZ8EBHA0_5hH1RScdl&is_apparel_size_selected=true&sh=OYxjHhzcBA",
+      "order": 4
     }
   ],
   "deletedIds": {
@@ -299,5 +301,5 @@
     "m_1795110302802_rrfuh": "2026-11-20T19:57:02.717Z",
     "m_1795110300142_ei3uc": "2026-11-20T19:57:03.884Z"
   },
-  "lastModified": "2026-11-22T21:48:42.798Z"
+  "lastModified": "2026-11-22T21:53:39.270Z"
 }
