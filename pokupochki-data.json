@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-25T15:58:24.646Z",
+  "exportedAt": "2026-11-25T16:00:01.397Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -22,7 +22,7 @@
       "imageUrl": "./products/milk.jpg",
       "category": "Молочные продукты и яйца",
       "completedAt": "2026-11-19T17:05:19.238Z",
-      "order": 20
+      "order": 21
     },
     {
       "id": "d-3",
@@ -31,7 +31,7 @@
       "completed": false,
       "createdAt": "2026-11-18T18:53:26.601Z",
       "updatedAt": "2026-11-18T18:53:26.601Z",
-      "order": 18
+      "order": 19
     },
     {
       "id": "d_1795077472837_bkmsr",
@@ -52,7 +52,7 @@
       "completed": false,
       "createdAt": "2026-11-19T14:26:26.690Z",
       "updatedAt": "2026-11-19T17:42:26.759Z",
-      "order": 17
+      "order": 18
     },
     {
       "id": "d_1795104338060_o5vti",
@@ -86,7 +86,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:14:13.524Z",
       "updatedAt": "2026-11-19T17:47:08.213Z",
-      "order": 12,
+      "order": 16,
       "imageUrl": "./products/sausage.jpg",
       "category": "Мясо, птица и рыба"
     },
@@ -98,7 +98,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:14:23.565Z",
       "updatedAt": "2026-11-19T16:14:23.565Z",
-      "order": 11
+      "order": 12
     },
     {
       "id": "d_1795104868910_6jh4r",
@@ -108,7 +108,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:14:28.910Z",
       "updatedAt": "2026-11-19T16:14:35.952Z",
-      "order": 8
+      "order": 9
     },
     {
       "id": "d_1795104924736_2lzu1",
@@ -118,7 +118,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:15:24.735Z",
       "updatedAt": "2026-11-19T16:15:24.735Z",
-      "order": 6
+      "order": 7
     },
     {
       "id": "d_1795104961654_0j44j",
@@ -126,7 +126,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:16:01.654Z",
       "updatedAt": "2026-11-19T16:16:01.654Z",
-      "order": 9
+      "order": 10
     },
     {
       "id": "d_1795105085070_p9lci",
@@ -142,7 +142,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:18:09.017Z",
       "updatedAt": "2026-11-19T16:18:09.017Z",
-      "order": 7
+      "order": 8
     },
     {
       "id": "d_1795105099963_u2d0j",
@@ -170,7 +170,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:18:34.907Z",
       "updatedAt": "2026-11-19T16:18:34.907Z",
-      "order": 10
+      "order": 11
     },
     {
       "id": "d_1795105123323_firnn",
@@ -208,7 +208,7 @@
       "completed": false,
       "createdAt": "2026-11-19T16:42:01.268Z",
       "updatedAt": "2026-11-19T16:42:01.268Z",
-      "order": 5
+      "order": 6
     }
   ],
   "mainPurchases": [
@@ -275,5 +275,5 @@
     "m_1795110302802_rrfuh": "2026-11-20T19:57:02.717Z",
     "m_1795110300142_ei3uc": "2026-11-20T19:57:03.884Z"
   },
-  "lastModified": "2026-11-25T15:58:24.646Z"
+  "lastModified": "2026-11-25T16:00:01.397Z"
 }
