@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-11-25T16:01:47.025Z",
+  "exportedAt": "2026-11-25T16:02:43.361Z",
   "dailyItems": [
     {
       "id": "d-1",
@@ -177,20 +177,22 @@
       "title": "молоко",
       "imageUrl": "./products/milk.jpg",
       "category": "Молочные продукты и яйца",
-      "completed": false,
+      "completed": true,
       "createdAt": "2026-11-19T16:18:43.323Z",
-      "updatedAt": "2026-11-19T16:18:43.323Z",
-      "order": 1
+      "updatedAt": "2026-11-25T16:02:05.948Z",
+      "order": 1,
+      "completedAt": "2026-11-25T16:02:05.948Z"
     },
     {
       "id": "d_1795105128234_1ulw4",
       "title": "кофе",
       "imageUrl": "./products/coffee.jpg",
       "category": "Заморозка и напитки",
-      "completed": false,
+      "completed": true,
       "createdAt": "2026-11-19T16:18:48.234Z",
-      "updatedAt": "2026-11-19T16:18:48.234Z",
-      "order": 0
+      "updatedAt": "2026-11-25T16:02:05.123Z",
+      "order": 0,
+      "completedAt": "2026-11-25T16:02:05.123Z"
     },
     {
       "id": "d_1795105131516_44s0j",
@@ -276,5 +278,5 @@
     "m_1795110302802_rrfuh": "2026-11-20T19:57:02.717Z",
     "m_1795110300142_ei3uc": "2026-11-20T19:57:03.884Z"
   },
-  "lastModified": "2026-11-25T16:01:47.025Z"
+  "lastModified": "2026-11-25T16:02:43.361Z"
 }
